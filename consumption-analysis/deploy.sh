@@ -1,3 +1,12 @@
 #!/bin/bash
-sudo cp -rf ~/src/* /srv/shiny-server/consumption-elec/
-sudo cp -rf ~/data/* /srv/shiny-server/data/
+SRC_DIR=/srv/shiny-server/consumption-elec/
+DATA_DIR=/srv/shiny-server/data/
+
+if [ ! -d $SRC_DIR ]; then
+    sudo make $SRC_DIR
+fi
+if [ ! -d $DATA_DIR ]; then
+    sudo make $DATA_DIR
+fi
+sudo cp -rf ./src/* $SRC_DIR
+sudo cp -rf ./data/* $DATA_DIR

@@ -5,13 +5,13 @@ library(dplyr)
 library(ggplot2)
 
 # Data Import
-data <- read_csv("../data/recs2015_clean.csv",locale=locale(tz="US/Pacific"))
+data <- read_csv("../data/recs2015_clean.csv", locale=locale(tz="US/Pacific"))
 codebook <- read_csv("../data/codebook_final.csv")
 
 # Constants
 KWH_COL_IDX <- grep("^KWH*",unlist(colnames(data)))
-KWH_COL_IDX=KWH_COL_IDX[2:length(KWH_COL_IDX)]
-USAGE_NAME=c('space hitting','AC(central, individual)','water heating',
+KWH_COL_IDX <- KWH_COL_IDX[2:length(KWH_COL_IDX)]
+USAGE_NAME <- c('space hitting','AC(central, individual)','water heating',
              'all refrigerators','first refrigerators','second refrigerators',
              'freezers','cooking(stove, cooktop, oven)','microwave',
              'clothes washer','clothes dryer','dishwashers',
@@ -19,14 +19,35 @@ USAGE_NAME=c('space hitting','AC(central, individual)','water heating',
              'air handler for heating','air handler for cooling',
              'evaporative cooler','ceiling fan','dehumidifiers','humidifiers',
              'swimming pool pump','hot tub pumps','hot tub heaters','etc')
-COLNAMES_IN_DROPDOWN=names(data)
-DROPDOWN_MENU=sort(COLNAMES_IN_DROPDOWN[1:242])
+COLNAMES_IN_DROPDOWN <- names(data)
+DROPDOWN_MENU <- sort(COLNAMES_IN_DROPDOWN[1:242])
 
 
-# Define UI for application that draws a histogram
+# Define UI for application
+#
+# titlePanel
+# textOutPut(description pages)
+# navibar
+#   tabPanel(Total Consumption)
+#     [sidebarLayout]
+#      sidebarPanel(two input dropdowns)
+#      mainPanel
+#       [tabsetPanel]
+#        tabPanel(Plot)
+#        tabPanel(Summary Table)
+#        tabPanel(Anova Test)
+#   tabPanel(Consumption Usage)
+#     [sidebarLayout]
+#      sidebarPanel(one input dropdowns)
+#      mainPanel
+#       [tabsetPanel]
+#        tabPanel(Box Plot)
+#        tabPanel(Bar Chart)
+#        tabPanel(Summary Table)
+#   tabPanel(Codebook)
 ui <- fluidPage(
   # title
-  titlePanel("Consumption Analysis", windowTitle <- "Consumption Analysis"),
+  titlePanel("Consumption Analysis", windowTitle="Consumption Analysis"),
   # guide(frequent used variables, data source, some infos)
   verbatimTextOutput('guide'),
   # Navigation Bar on the top
@@ -70,7 +91,7 @@ ui <- fluidPage(
                                                              height=3000,
                                                              width=700)),
                             tabPanel("Summary Table", tableOutput("summarytable"))
-                            ),style <- "overflow-y:scroll") # end of main panel
+                            ),style="overflow-y:scroll") # end of main panel
              )),
              # code book for variable description
              tabPanel("Codebook",tableOutput('codebook.df'))
@@ -78,7 +99,7 @@ ui <- fluidPage(
 )
 
 # utility functions
-make.summary.df<-function(data,name){
+make.summary.df <- function(data,name){
   # make summary data frame by 'name'
   # 
   # Args:
@@ -99,7 +120,7 @@ q1 <- function(x){
 q3 <- function(x){
   quantile(x,0.75)
 }
-br<-function(){
+br <- function(){
   cat('',"\n")
 }
 
@@ -127,7 +148,7 @@ server <- function(input, output) {
     cat(' ',end="\n")
     cat(unlist(codebook[codebook$name==input$firstgroup,3]),end="\n")
     # if user choose second group
-    if("None"!=input$secondgroup & input$firstgroup!=input$secondgroup){
+    if ("None"!=input$secondgroup & input$firstgroup!=input$secondgroup){
       cat("===========",end="\n")
       cat(input$secondgroup,end="\n")
       cat(' ',unlist(codebook[codebook$name==input$secondgroup,2
@@ -140,7 +161,7 @@ server <- function(input, output) {
   # boxplot panel(total consumption panel)
   output$plot1 <- renderPlot({
     firstgroup=as.factor(data[[input$firstgroup]])
-    if(input$secondgroup == "None" | input$firstgroup == input$secondgroup){
+    if (input$secondgroup == "None" | input$firstgroup == input$secondgroup){
       # only when first group is selected
       boxplot(data[['KWH']]~ firstgroup,
               xlab=input$firstgroup,
@@ -165,7 +186,7 @@ server <- function(input, output) {
   output$summary1 <- renderPrint({
     cat("By",input$firstgroup,end="\n")
     print(make.summary.df(data,input$firstgroup))
-    if("None"!=input$secondgroup & input$firstgroup!=input$secondgroup){
+    if ("None"!=input$secondgroup & input$firstgroup!=input$secondgroup){
       # only when second group is selected
       cat(" ",end="\n")
       cat("By",input$secondgroup,end="\n")
@@ -176,7 +197,7 @@ server <- function(input, output) {
   # anova test tab panel(total consumption panel)
   output$aov1 <- renderPrint({
     total.consumption=data[['KWH']]
-    if(input$secondgroup == "None" | input$firstgroup == input$secondgroup){
+    if (input$secondgroup == "None" | input$firstgroup == input$secondgroup){
       # only when first group is selected
       cat("oneway ANOVA test of",input$firstgroup,end="\n")
       aov.result=aov(total.consumption~ as.factor(data[[input$firstgroup]]))
@@ -192,9 +213,9 @@ server <- function(input, output) {
     print(summary.aov.result)
     # by the value of p-value, it print variable's influence
     p.value=summary.aov.result[[1]][["Pr(>F)"]]
-    if(p.value[1]<0.05) 
+    if (p.value[1]<0.05) 
       cat('\n\n','==>',input$firstgroup,' is influential to total consumption\n')
-    if(isTRUE(p.value[2]<0.05)) 
+    if (isTRUE(p.value[2]<0.05)) 
       cat(' ==>',input$secondgroup,' is influential to total consumption\n')
   })
   
@@ -205,13 +226,13 @@ server <- function(input, output) {
     cat(' ',end="\n")
     cat(unlist(codebook[codebook$name==input$firstgroup2,3]),end="\n")
   })
-
+  # rendering bar plot tabpanel
   output$boxplot <- renderPlot({
     criterion <- input$firstgroup2
     f.group <- as.factor(data[[criterion]])
     nr.levels <- nlevels(f.group)
     par(mfrow=c(13,2))
-    for(col in 1:26){
+    for (col in 1:26){
       idx <- KWH_COL_IDX[col]
       desc <- USAGE_NAME[col]
       boxplot(data[[idx]]~f.group,xlab=criterion,ylab=paste("KWH used by\n",desc),
@@ -220,19 +241,18 @@ server <- function(input, output) {
       
     }
   })
-  
+  # rendering plot
   output$barchart <- renderPlot({
     criterion <- input$firstgroup2
     f.group <- as.factor(data[[criterion]])
     nr.levels <- nlevels(f.group)
-    par(mfrow=c(floor(nr.levels/2)+1,2),oma=c(4,4,4,10),mar=c(7,10,1,1))
-    criterion="DIVISION"
+    par(mfrow=c(floor(nr.levels/2)+1,2),
+      oma=c(4,4,4,10),mar=c(7,10,1,1))
     tmp <- data %>% select(criterion,KWH_COL_IDX) %>% group_by_(criterion) %>% 
       summarise_all(funs(mean)) 
     name=rownames(tmp)
     tmp <- tmp %>% slice(1:n()) %>% as.matrix
-    for(col in 1:nr.levels){
-      
+    for (col in 1:nr.levels){
       barplot(tmp[col,2:27]+0.05,
               horiz=TRUE, 
               names.arg <- USAGE_NAME,
@@ -241,7 +261,7 @@ server <- function(input, output) {
               xlab="KWH")
     }
   })
-  
+  # rendering summary table for 2nd navpanel
   output$summarytable <- renderTable({
     criterion <- input$firstgroup2
     tmp <- data %>% select(criterion,KWH_COL_IDX) 
@@ -253,13 +273,15 @@ server <- function(input, output) {
     rs <- rs[2:NROW(rs),]
     rs <- cbind(rs,description=USAGE_NAME)
     return(rs)
-  },rownames <- TRUE)
+  }, rownames=TRUE)
   
   
   ## panel 3
-  output$codebook.df <- renderTable(codebook[1:(NROW(codebook)-2),])
+  output$codebook.df <- renderTable(
+    codebook[1:(NROW(codebook)-2),]
+    )
 }
 
 # Run the application 
-shinyApp(ui <- ui, server <- server)
+shinyApp(ui=ui, server=server)
 
