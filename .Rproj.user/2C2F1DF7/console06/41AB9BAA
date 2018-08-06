@@ -280,3 +280,84 @@ electricity-consumption-analysis-web-app.Rproj
 gitignore
 ]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-webb-app[00m$ mv gitignore .gitignore
 ]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-webb-app[00m$ sdf[K[K[Kc[Ksudo ap[K[K[K[K[K[K[Kgit add -A
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-webb-app[00m$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	[32mmodified:   .Rproj.user/2C2F1DF7/console06/41AB9BAA[m
+	[32mmodified:   .Rproj.user/2C2F1DF7/console06/INDEX001[m
+	[32mmodified:   .Rproj.user/2C2F1DF7/sources/s-516cc9e5/DF8ACF83[m
+	[32mrenamed:    gitignore -> .gitignore[m
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	[31mmodified:   .Rproj.user/2C2F1DF7/console06/41AB9BAA[m
+
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-webb-app[00m$ git comi[Kmit -m "add .gitignore"
+[master e57bfde] add .gitignore
+ Committer: Eunsoo Sheen <es-shiny@instance-1.c.shinyapp-211917.internal>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 4 files changed, 84 insertions(+), 3 deletions(-)
+ rewrite .Rproj.user/2C2F1DF7/console06/INDEX001 (74%)
+ rename gitignore => .gitignore (100%)
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-webb-app[00m$ :[Kgit push
+warning: push.default is unset; its implicit value has changed in
+Git 2.0 from 'matching' to 'simple'. To squelch this message
+and maintain the traditional behavior, use:
+
+  git config --global push.default matching
+
+To squelch this message and adopt the new behavior now, use:
+
+  git config --global push.default simple
+
+When push.default is set to 'matching', git will push local branches
+to the remote branches that already exist with the same name.
+
+Since Git 2.0, Git defaults to the more conservative 'simple'
+behavior, which only pushes the current branch to the corresponding
+remote branch that 'git pull' uses to update the current branch.
+
+See 'git help config' and search for 'push.default' for further information.
+(the 'simple' mode was introduced in Git 1.7.11. Use the similar mode
+'current' instead of 'simple' if you sometimes use older versions of Git)
+
+error: cannot run rpostback-askpass: No such file or directory
+Username for 'https://github.com': tlsdmstn56
+error: cannot run rpostback-askpass: No such file or directory
+Password for 'https://tlsdmstn56@github.com': 
+Counting objects: 10, done.
+Compressing objects:  10% (1/10)   Compressing objects:  20% (2/10)   Compressing objects:  30% (3/10)   Compressing objects:  40% (4/10)   Compressing objects:  50% (5/10)   Compressing objects:  60% (6/10)   Compressing objects:  70% (7/10)   Compressing objects:  80% (8/10)   Compressing objects:  90% (9/10)   Compressing objects: 100% (10/10)   Compressing objects: 100% (10/10), done.
+Writing objects:  10% (1/10)   Writing objects:  20% (2/10)   Writing objects:  30% (3/10)   Writing objects:  40% (4/10)   Writing objects:  50% (5/10)   Writing objects:  60% (6/10)   Writing objects:  70% (7/10)   Writing objects:  80% (8/10)   Writing objects:  90% (9/10)   Writing objects: 100% (10/10)   Writing objects: 100% (10/10), 2.48 KiB | 0 bytes/s, done.
+Total 10 (delta 4), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/4)   [Kremote: Resolving deltas:  25% (1/4)   [Kremote: Resolving deltas:  50% (2/4)   [Kremote: Resolving deltas:  75% (3/4)   [Kremote: Resolving deltas: 100% (4/4)   [Kremote: Resolving deltas: 100% (4/4), completed with 4 local objects.[K
+To https://github.com/tlsdmstn56/electricity-consumption-analysis-web-app.git
+   0531a65..e57bfde  master -> master
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-webb-app[00m$ exit [K[K[K[K[K[K[A]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ sdf[K[K[Kls
+LICENSE    [0m[01;34mconsumption-analysis[0m
+README.md  electricity-consumption-analysis-web-app.Rproj
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ cd consumption-anaalysis/
+]0;/home/es-shiny/electricity-consumption-analysis-web-app/consumption-analysis]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysiis[00m$ ./[K[Kbash deploy.sh p[K
+[sudo] password for es-shiny: 
+]0;/home/es-shiny/electricity-consumption-analysis-web-app/consumption-analysis]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysiis[00m$ ]0;/home/es-shiny/electricity-consumption-analysis-web-app/consumption-analysis]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysiis[00m$ [K[A]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ bash deploy.ssh [A]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ cd consumption-analysis/[A]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ bash deploy.sh [K[A]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ [K
+sdf[K[K[Kls
+[0m[01;34mdata[0m  deploy.sh  [01;34msrc[0m
+]0;/home/es-shiny/electricity-consumption-analysis-web-app/consumption-analysis]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ cd[K[Kbash deploy.ssh 
+[sudo] password for es-shiny: 
+]0;/home/es-shiny/electricity-consumption-analysis-web-app/consumption-analysis]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ bash deploy.ssh [A]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ [K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cgit add -A

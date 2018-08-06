@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "0",
+    "hash" : "3965174413",
     "id" : "DF8ACF83",
-    "lastKnownWriteTime" : 1533573734,
-    "last_content_update" : 1533573734767,
+    "lastKnownWriteTime" : 1533594853,
+    "last_content_update" : 1533594853607,
     "path" : "~/electricity-consumption-analysis-web-app/consumption-analysis/src/app.R",
     "project_path" : "consumption-analysis/src/app.R",
     "properties" : {
-        "cursorPosition" : "255,29",
-        "scrollLine" : "240"
+        "cursorPosition" : "261,29",
+        "scrollLine" : "246"
     },
     "relative_order" : 1,
     "source_on_save" : false,

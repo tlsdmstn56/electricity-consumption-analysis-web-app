@@ -173,7 +173,7 @@ server <- function(input, output) {
       # when first and second group was selected
       boxplot(data[['KWH']]~ firstgroup*as.factor(data[[input$secondgroup]]),
               xlab=paste("Legend: ",input$firstgroup,".", input$secondgroup,sep=""),
-              ylab="Total Consumption of Electricity",
+              ylab="Total Consumption of Electricity(1 year)",
               main=paste("Box Plot of total consumption by\n",
                          input$firstgroup,"and",input$secondgroup,sep=" "),
               col=rainbow(nlevels(firstgroup)),
@@ -259,7 +259,7 @@ server <- function(input, output) {
               names.arg=USAGE_NAME,
               main=name[col],
               las=1,
-              xlab="KWH")
+              xlab="KWH(year)")
     }
   })
   # rendering summary table for 2nd navpanel
