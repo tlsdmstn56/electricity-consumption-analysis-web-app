@@ -199,3 +199,84 @@ README.md  electricity-consumption-analysis-web-app.Rproj
 ]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ c[Kr[Kvim electricity-coonsumption-analysis-web-app.Rproj 
 ]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ vim gitignore
 ]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ git stat[K[K[K[Kadd -A
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 3 commits.
+  (use "git push" to publish your local commits)
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	[32mmodified:   .Rproj.user/2C2F1DF7/console06/41AB9BAA[m
+	[32mmodified:   .Rproj.user/2C2F1DF7/console06/41AB9BAA.env[m
+	[32mmodified:   gitignore[m
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	[31mmodified:   .Rproj.user/2C2F1DF7/console06/41AB9BAA[m
+
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ ls -l[Ka
+[0m[01;34m.[0m            [01;34m.git[0m       [01;34mconsumption-analysis[0m
+[01;34m..[0m           LICENSE    electricity-consumption-analysis-web-app.Rproj
+[01;34m.Rproj.user[0m  README.md  gitignore
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ ls -agit status[K[K[K[K[K[Kadd[K[K[K[Kco[K[K commit -a[Km "fi l[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Kad d g[Kfiles on git [Kignore
+> 
+> "
+[master 0531a65] add files on gitignore
+ Committer: Eunsoo Sheen <es-shiny@instance-1.c.shinyapp-211917.internal>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 3 files changed, 81 insertions(+), 1 deletion(-)
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ sdf[K[K[Kgit push
+warning: push.default is unset; its implicit value has changed in
+Git 2.0 from 'matching' to 'simple'. To squelch this message
+and maintain the traditional behavior, use:
+
+  git config --global push.default matching
+
+To squelch this message and adopt the new behavior now, use:
+
+  git config --global push.default simple
+
+When push.default is set to 'matching', git will push local branches
+to the remote branches that already exist with the same name.
+
+Since Git 2.0, Git defaults to the more conservative 'simple'
+behavior, which only pushes the current branch to the corresponding
+remote branch that 'git pull' uses to update the current branch.
+
+See 'git help config' and search for 'push.default' for further information.
+(the 'simple' mode was introduced in Git 1.7.11. Use the similar mode
+'current' instead of 'simple' if you sometimes use older versions of Git)
+
+error: cannot run rpostback-askpass: No such file or directory
+Username for 'https://github.com': tlsdmstn56
+error: cannot run rpostback-askpass: No such file or directory
+Password for 'https://tlsdmstn56@github.com': 
+Counting objects: 46, done.
+Compressing objects:   2% (1/40)   Compressing objects:   5% (2/40)   Compressing objects:   7% (3/40)   Compressing objects:  10% (4/40)   Compressing objects:  12% (5/40)   Compressing objects:  15% (6/40)   Compressing objects:  17% (7/40)   Compressing objects:  20% (8/40)   Compressing objects:  22% (9/40)   Compressing objects:  25% (10/40)   Compressing objects:  27% (11/40)   Compressing objects:  30% (12/40)   Compressing objects:  32% (13/40)   Compressing objects:  35% (14/40)   Compressing objects:  37% (15/40)   Compressing objects:  40% (16/40)   Compressing objects:  42% (17/40)   Compressing objects:  45% (18/40)   Compressing objects:  47% (19/40)   Compressing objects:  50% (20/40)   Compressing objects:  52% (21/40)   Compressing objects:  55% (22/40)   Compressing objects:  57% (23/40)   Compressing objects:  60% (24/40)   Compressing objects:  62% (25/40)   Compressing objects:  65% (26/40)   Compressing objects:  67% (27/40)   Compressing objects:  70% (28/40)   Compressing objects:  72% (29/40)   Compressing objects:  75% (30/40)   Compressing objects:  77% (31/40)   Compressing objects:  80% (32/40)   Compressing objects:  82% (33/40)   Compressing objects:  85% (34/40)   Compressing objects:  87% (35/40)   Compressing objects:  90% (36/40)   Compressing objects:  92% (37/40)   Compressing objects:  95% (38/40)   Compressing objects:  97% (39/40)   Compressing objects: 100% (40/40)   Compressing objects: 100% (40/40), done.
+Writing objects:   2% (1/46)   Writing objects:   4% (2/46)   Writing objects:   6% (3/46)   Writing objects:   8% (4/46)   Writing objects:  10% (5/46)   Writing objects:  13% (6/46)   Writing objects:  15% (7/46)   Writing objects:  17% (8/46)   Writing objects:  19% (9/46)   Writing objects:  21% (10/46)   Writing objects:  26% (12/46)   Writing objects:  28% (13/46)   Writing objects:  30% (14/46)   Writing objects:  32% (15/46)   Writing objects:  34% (16/46)   Writing objects:  36% (17/46)   Writing objects:  39% (18/46)   Writing objects:  41% (19/46)   Writing objects:  43% (20/46)   Writing objects:  45% (21/46)   Writing objects:  47% (22/46)   Writing objects:  50% (23/46)   Writing objects:  52% (24/46)   Writing objects:  54% (25/46)   Writing objects:  56% (26/46)   Writing objects:  58% (27/46)   Writing objects:  60% (28/46)   Writing objects:  63% (29/46)   Writing objects:  65% (30/46)   Writing objects:  67% (31/46)   Writing objects:  69% (32/46)   Writing objects:  71% (33/46)   Writing objects:  73% (34/46)   Writing objects:  76% (35/46)   Writing objects:  78% (36/46)   Writing objects:  80% (37/46)   Writing objects:  82% (38/46)   Writing objects:  84% (39/46)   Writing objects:  86% (40/46)   Writing objects:  89% (41/46)   Writing objects:  91% (42/46)   Writing objects:  93% (43/46)   Writing objects:  95% (44/46)   Writing objects:  97% (45/46)   Writing objects: 100% (46/46)   Writing objects: 100% (46/46), 10.60 KiB | 0 bytes/s, done.
+Total 46 (delta 10), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/10)   [Kremote: Resolving deltas:  30% (3/10)   [Kremote: Resolving deltas:  60% (6/10)   [Kremote: Resolving deltas:  70% (7/10)   [Kremote: Resolving deltas:  90% (9/10)   [Kremote: Resolving deltas: 100% (10/10)   [Kremote: Resolving deltas: 100% (10/10), completed with 1 local object.[K
+To https://github.com/tlsdmstn56/electricity-consumption-analysis-web-app.git
+   cf50b53..0531a65  master -> master
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ [K]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app [00m$ m[Kls
+LICENSE
+README.md
+[0m[01;34mconsumption-analysis[0m
+electricity-consumption-analysis-web-app.Rproj
+gitignore
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-webb-app[00m$ mv gitignore .gitignore
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-webb-app[00m$ sdf[K[K[Kc[Ksudo ap[K[K[K[K[K[K[Kgit add -A
