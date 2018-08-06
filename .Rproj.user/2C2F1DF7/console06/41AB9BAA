@@ -121,3 +121,81 @@ Changes not staged for commit:
 
 ]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ vim gitin[K[Kignore
 ]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ git add- [K[K -A
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ igt[K[K[Kgit commit -m "[K[K[K[K[K
+Aborting commit due to empty commit message.
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ git commit -m"[K 
+error: switch `m' requires a value
+usage: git commit [<options>] [--] <pathspec>...
+
+    -q, --quiet           suppress summary after successful commit
+    -v, --verbose         show diff in commit message template
+
+Commit message options
+    -F, --file <file>     read message from file
+    --author <author>     override author for commit
+    --date <date>         override date for commit
+    -m, --message <message>
+                          commit message
+    -c, --reedit-message <commit>
+                          reuse and edit message from specified commit
+    -C, --reuse-message <commit>
+                          reuse message from specified commit
+    --fixup <commit>      use autosquash formatted message to fixup specified commit
+    --squash <commit>     use autosquash formatted message to squash specified commit
+    --reset-author        the commit is authored by me now (used with -C/-c/--amend)
+    -s, --signoff         add Signed-off-by:
+    -t, --template <file>
+                          use specified template file
+    -e, --edit            force edit of commit
+    --cleanup <default>   how to strip spaces and #comments from message
+    --status              include status in commit message template
+    -S, --gpg-sign[=<key-id>]
+                          GPG sign commit
+
+Commit contents options
+    -a, --all             commit all changed files
+    -i, --include         add specified files to index for commit
+    --interactive         interactively add files
+    -p, --patch           interactively add changes
+    -o, --only            commit only specified files
+    -n, --no-verify       bypass pre-commit hook
+    --dry-run             show what would be committed
+    --short               show status concisely
+    --branch              show branch information
+    --porcelain           machine-readable output
+    --long                show status in long format (default)
+    -z, --null            terminate entries with NUL
+    --amend               amend previous commit
+    --no-post-rewrite     bypass post-rewrite hook
+    -u, --untracked-files[=<mode>]
+                          show untracked files, optional modes: all, normal, no. (Default: all)
+
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ "[Kgit commit -m [K -m "cl ean files"
+[master 45c382e] clean files
+ Committer: Eunsoo Sheen <es-shiny@instance-1.c.shinyapp-211917.internal>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 3 files changed, 64 insertions(+), 2 deletions(-)
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ ls
+LICENSE    [0m[01;34mconsumption-analysis[0m                            gitignore
+README.md  electricity-consumption-analysis-web-app.Rproj
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ cd consumption-anaalysis/
+]0;/home/es-shiny/electricity-consumption-analysis-web-app/consumption-analysis]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysiis[00m$ s[Kls
+[0m[01;34mdata[0m  deploy.sh  [01;34msrc[0m
+]0;/home/es-shiny/electricity-consumption-analysis-web-app/consumption-analysis]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysiis[00m$ cd ..
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ ls
+LICENSE    [0m[01;34mconsumption-analysis[0m                            gitignore
+README.md  electricity-consumption-analysis-web-app.Rproj
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ c[Kr[Kvim electricity-coonsumption-analysis-web-app.Rproj 
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ vim gitignore
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ git stat[K[K[K[Kadd -A
