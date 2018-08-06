@@ -2,3 +2,60 @@
 LICENSE    [0m[01;34mconsumption-analysis[0m
 README.md  electricity-consumption-analysis-web-app.Rproj
 ]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ git push[K[K[K[K[Kadd [K[K[K[K add-[K -A
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ git commit -m "i[Kfi x pug
+> 
+> * consumption usage [K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kboxplot panel in sdf[K[K[Kconsumption usage tab
+> "
+[master 724586a] fix pug
+ Committer: Eunsoo Sheen <es-shiny@instance-1.c.shinyapp-211917.internal>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 10 files changed, 340 insertions(+), 5 deletions(-)
+ create mode 100644 .Rproj.user/2C2F1DF7/console06/41AB9BAA
+ create mode 100644 .Rproj.user/2C2F1DF7/console06/INDEX001
+ create mode 100644 .Rproj.user/2C2F1DF7/sources/prop/C4FF141C
+ create mode 100644 .Rproj.user/2C2F1DF7/sources/prop/INDEX
+ create mode 100644 .Rproj.user/2C2F1DF7/sources/s-516cc9e5/DF8ACF83
+ create mode 100644 .Rproj.user/2C2F1DF7/sources/s-516cc9e5/DF8ACF83-contents
+ create mode 100644 .Rproj.user/2C2F1DF7/sources/s-516cc9e5/lock_file
+ create mode 100644 .Rproj.user/shared/notebooks/patch-chunk-names
+ create mode 100644 electricity-consumption-analysis-web-app.Rproj
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ rm .Rproj[K[K[K[K[K[K[K[K[Kvim git ig[K[K[K[K[K[K.[Kgitignore
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ add -A[K[K[K[K[K[Kgt[Kit add- [K[K -A
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	[32mmodified:   .Rproj.user/2C2F1DF7/console06/41AB9BAA[m
+	[32mnew file:   .Rproj.user/2C2F1DF7/console06/41AB9BAA.env[m
+	[32mmodified:   .Rproj.user/2C2F1DF7/console06/INDEX001[m
+	[32mnew file:   gitignore[m
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	[31mmodified:   .Rproj.user/2C2F1DF7/console06/41AB9BAA[m
+
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ ls
+LICENSE    [0m[01;34mconsumption-analysis[0m                            gitignore
+README.md  electricity-consumption-analysis-web-app.Rproj
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ ls -a
+[0m[01;34m.[0m            [01;34m.git[0m       [01;34mconsumption-analysis[0m
+[01;34m..[0m           LICENSE    electricity-consumption-analysis-web-app.Rproj
+[01;34m.Rproj.user[0m  README.md  gitignore
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ ls -a[Kgit statusadd -Avim gitignore
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ vim gitignore[8Pls -a[Kgit statusadd -A
