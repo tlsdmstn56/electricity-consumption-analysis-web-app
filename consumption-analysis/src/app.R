@@ -1,12 +1,13 @@
 # ibrary import
 library(shiny)
+library(DT)
 library(readr)
 library(dplyr)
 library(ggplot2)
 
 # Data Import
 data <- read_csv("../data/recs2015_clean.csv", locale=locale(tz="US/Pacific"))
-codebook <- read_csv("../data/codebook_final.csv")
+codebook <- read_csv("../data/codebook_final.csv",na = c("",""))
 
 # Constants
 KWH_COL_IDX <- grep("^KWH*",unlist(colnames(data)))
@@ -69,9 +70,17 @@ ui <- fluidPage(
                         # plots and summary, anova
                         mainPanel(
                           tabsetPanel(
-                            tabPanel("Plot", plotOutput("plot1")),
-                            tabPanel("Summary", verbatimTextOutput("summary1")),
-                            tabPanel("Anova Test", verbatimTextOutput("aov1"))
+                            tabPanel("Plot", 
+                                     br(),
+                                     tags$p("Press Download Button for bigger image"),
+                                     downloadButton("download_plot1", "Download"), 
+                                     br(),
+                                     plotOutput("plot1")),
+                            tabPanel("Summary", 
+                                     downloadButton("download_summary1", "Download"), 
+                                     verbatimTextOutput("summary1")),
+                            tabPanel("Anova Test", 
+                                     verbatimTextOutput("aov1"))
                             )) # end of main panel
              )),
              # Consumption Usage tab
@@ -94,7 +103,7 @@ ui <- fluidPage(
                             ),style="overflow-y:scroll") # end of main panel
              )),
              # code book for variable description
-             tabPanel("Codebook",tableOutput('codebook.df'))
+             tabPanel("Codebook", dataTableOutput('codebook.df'))
              )
 )
 
@@ -121,11 +130,33 @@ q3 <- function(x){
   quantile(x,0.75)
 }
 br <- function(){
-  cat('',"\n")
+  cat(' ',"\n")
 }
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+  renderPlot1 <- function(input) {
+    firstgroup=as.factor(data[[input$firstgroup]])
+    if (input$secondgroup == "None" | input$firstgroup == input$secondgroup){
+      # only when first group is selected
+      boxplot(data[['KWH']]~ firstgroup,
+              xlab=input$firstgroup,
+              ylab="Total Consumption of Electricity(KWH, 1 year)",
+              main=paste("Box Plot of total consumption by",input$firstgroup,sep=" "),
+              range=3
+      )
+    } else{
+      # when first and second group was selected
+      boxplot(data[['KWH']]~ firstgroup*as.factor(data[[input$secondgroup]]),
+              xlab=paste("Legend: ",input$firstgroup,".", input$secondgroup,sep=""),
+              ylab="Total Consumption of Electricity(KWH, 1 year)",
+              main=paste("Box Plot of total consumption by\n",
+                         input$firstgroup,"and",input$secondgroup,sep=" "),
+              col=rainbow(nlevels(firstgroup)),
+              range=3
+      )
+    }
+  }
   # for guide(frequent used variables, data source, some infos) on the top 
   output$guide<-renderPrint({
     cat("Data Source: RECS2015(Residential Electricity Consumption Survey 2015)",end="\n")
@@ -159,27 +190,31 @@ server <- function(input, output) {
     
   })
   # boxplot panel(total consumption panel)
-  output$plot1 <- renderPlot({
-    firstgroup=as.factor(data[[input$firstgroup]])
-    if (input$secondgroup == "None" | input$firstgroup == input$secondgroup){
-      # only when first group is selected
-      boxplot(data[['KWH']]~ firstgroup,
-              xlab=input$firstgroup,
-              ylab="Total Consumption of Electricity",
-              main=paste("Box Plot of total consumption by",input$firstgroup,sep=" "),
-              range=3
-      )
-    } else{
-      # when first and second group was selected
-      boxplot(data[['KWH']]~ firstgroup*as.factor(data[[input$secondgroup]]),
-              xlab=paste("Legend: ",input$firstgroup,".", input$secondgroup,sep=""),
-              ylab="Total Consumption of Electricity(1 year)",
-              main=paste("Box Plot of total consumption by\n",
-                         input$firstgroup,"and",input$secondgroup,sep=" "),
-              col=rainbow(nlevels(firstgroup)),
-              range=3
-      )
+  output$download_plot1 <- downloadHandler(
+    filename=function(){
+      filename <- paste0(Sys.Date(),"_",input$firstgroup)
+      if ("None"!=input$secondgroup & input$firstgroup!=input$secondgroup) {
+        filename <- paste0(filename,"_",input$secondgroup)
+      }
+      filename <- paste0(filename,"_boxplot.jpeg")
+      return(filename)
+    },
+    content=function(filename){
+      nr.levels <- nlevels(data[[input$firstgroup]] %>% as.factor)
+      if ("None"!=input$secondgroup & input$firstgroup!=input$secondgroup){
+        nr.levels <- nr.levels * nlevels(data[[input$secondgroup]] %>% as.factor)
+      }
+      jpeg_width = nr.levels*100
+      jpeg(filename = filename, 
+           height=500, 
+           width=jpeg_width
+           )
+      renderPlot1(input)
+      dev.off()
     }
+  )
+  output$plot1 <- renderPlot({
+    renderPlot1(input)
   })
   
   # summary tabnpanel(total consumption panel)
@@ -221,10 +256,12 @@ server <- function(input, output) {
   
   # variable description panel(consumption usage page)
   output$var.desc2 <- renderPrint({
+    desc <- unlist(codebook[codebook$name==input$firstgroup2,2])
+    coded <- unlist(codebook[codebook$name==input$firstgroup2,3])
     cat(input$firstgroup2, end="\n")
-    cat(' ',unlist(codebook[codebook$name==input$firstgroup2,2]),end="\n")
-    cat(' ',end="\n")
-    cat(unlist(codebook[codebook$name==input$firstgroup2,3]),end="\n")
+    cat('  :',desc,end="\n")
+    br()
+    cat(coded,end="\n")
   })
   # rendering bar plot tabpanel
   output$boxplot <- renderPlot({
@@ -278,8 +315,12 @@ server <- function(input, output) {
   
   
   ## panel 3
-  output$codebook.df <- renderTable(
-    codebook[1:(NROW(codebook)-2),]
+  output$codebook.df <- renderDataTable(
+    datatable(codebook[1:(NROW(codebook)-2),], 
+              options = list(
+                paging = TRUE,
+                pageLength = 20
+                ))
     )
 }
 

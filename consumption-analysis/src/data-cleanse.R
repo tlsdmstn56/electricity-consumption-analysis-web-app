@@ -1,6 +1,5 @@
 library(readr)
 library(dplyr)
-library(xlsx)
 
 # codebook cleasing
 codebook <- readxl::read_xlsx("./data/codebook2015_public_v3.xlsx",skip = 3)
@@ -22,7 +21,36 @@ for(i in seq(1:NROW(codebook))) {
 }
 codebook_final <- data.frame(name=unlist(codebook$name),
                             desc=unlist(codebook$desc),
-                            coded=cat.table)
+                            coded=unlist(cat.table))
+
+drop.codebook.row <- function(data, pattern, print_result=FALSE) {
+  test <- data[-grep(pattern, unlist(data$name)), ]
+  if (print_result) {
+    cat(NROW(data),"-->",NROW(test),end="\n")
+  }
+  return(test)
+}
+
+codebook_final <- drop.codebook.row(codebook_final,"CUFEET")
+codebook_final <- drop.codebook.row(codebook_final,"BRRWT")
+codebook_final <- drop.codebook.row(codebook_final,"BTUNG")
+codebook_final <- drop.codebook.row(codebook_final,"GALLON")
+codebook_final <- drop.codebook.row(codebook_final,"DOEID")
+codebook_final <- drop.codebook.row(codebook_final,"REGIONC")
+codebook_final <- drop.codebook.row(codebook_final,"^Z+")
+codebook_final <- drop.codebook.row(codebook_final,"TOTU")
+codebook_final <- drop.codebook.row(codebook_final,"NWEIGHT")
+codebook_final <- drop.codebook.row(codebook_final,"CDD")
+codebook_final <- drop.codebook.row(codebook_final,"HDD")
+codebook_final <- drop.codebook.row(codebook_final,"DOLNG")
+codebook_final <- drop.codebook.row(codebook_final,"BTULP")
+codebook_final <- drop.codebook.row(codebook_final,"DOLLP")
+codebook_final <- drop.codebook.row(codebook_final,"BTUFO")
+codebook_final <- drop.codebook.row(codebook_final,"DOLFO")
+codebook_final <- drop.codebook.row(codebook_final,"TOTAL")
+codebook_final <- drop.codebook.row(codebook_final,"FUEL")
+codebook_final <- drop.codebook.row(codebook_final,"^TOT*")
+
 write.csv(codebook_final,"./data/codebook_final.csv",row.names=FALSE)
 
 # data cleasing

@@ -361,3 +361,69 @@ sdf[K[K[Kls
 [sudo] password for es-shiny: 
 ]0;/home/es-shiny/electricity-consumption-analysis-web-app/consumption-analysis]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ bash deploy.ssh [A]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ [K
 [K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cgit add -A
+]0;/home/es-shiny/electricity-consumption-analysis-web-app/consumption-analysis]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ git commit - m "f[Ksfd[K[K[Kupdate sdf[K[K[Kx labels
+> 
+> * sdf[K[K[Ku[Kf[Kchange x[Kx labels in second panel: KWH --> KWH(year) to specifiy[K[K[K[K[Kcify sdf[K[K[Ksdf[K[K[Kmea[K[K[K[K[K[K[K[K[K[K[Kcla[Keari[K[K[K[Kear[K[K[Karify the KWH meanin[K[K[K[K[K[K[K[K[K[K,[Kmeaning
+> "
+[master dfe8c42] update x labels
+ Committer: Eunsoo Sheen <es-shiny@instance-1.c.shinyapp-211917.internal>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 8 files changed, 98 insertions(+), 18 deletions(-)
+ rewrite .Rproj.user/2C2F1DF7/console06/INDEX001 (100%)
+]0;/home/es-shiny/electricity-consumption-analysis-web-app/consumption-analysis]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ git push
+warning: push.default is unset; its implicit value has changed in
+Git 2.0 from 'matching' to 'simple'. To squelch this message
+and maintain the traditional behavior, use:
+
+  git config --global push.default matching
+
+To squelch this message and adopt the new behavior now, use:
+
+  git config --global push.default simple
+
+When push.default is set to 'matching', git will push local branches
+to the remote branches that already exist with the same name.
+
+Since Git 2.0, Git defaults to the more conservative 'simple'
+behavior, which only pushes the current branch to the corresponding
+remote branch that 'git pull' uses to update the current branch.
+
+See 'git help config' and search for 'push.default' for further information.
+(the 'simple' mode was introduced in Git 1.7.11. Use the similar mode
+'current' instead of 'simple' if you sometimes use older versions of Git)
+
+error: cannot run rpostback-askpass: No such file or directory
+Username for 'https://github.com': tlsdmstn56
+error: cannot run rpostback-askpass: No such file or directory
+Password for 'https://tlsdmstn56@github.com': 
+Counting objects: 17, done.
+Compressing objects:   6% (1/16)   Compressing objects:  12% (2/16)   Compressing objects:  18% (3/16)   Compressing objects:  25% (4/16)   Compressing objects:  31% (5/16)   Compressing objects:  37% (6/16)   Compressing objects:  43% (7/16)   Compressing objects:  50% (8/16)   Compressing objects:  56% (9/16)   Compressing objects:  62% (10/16)   Compressing objects:  68% (11/16)   Compressing objects:  75% (12/16)   Compressing objects:  81% (13/16)   Compressing objects:  87% (14/16)   Compressing objects:  93% (15/16)   Compressing objects: 100% (16/16)   Compressing objects: 100% (16/16), done.
+Writing objects:   5% (1/17)   Writing objects:  11% (2/17)   Writing objects:  17% (3/17)   Writing objects:  23% (4/17)   Writing objects:  29% (5/17)   Writing objects:  35% (6/17)   Writing objects:  41% (7/17)   Writing objects:  47% (8/17)   Writing objects:  52% (9/17)   Writing objects:  58% (10/17)   Writing objects:  64% (11/17)   Writing objects:  70% (12/17)   Writing objects:  76% (13/17)   Writing objects:  82% (14/17)   Writing objects:  88% (15/17)   Writing objects:  94% (16/17)   Writing objects: 100% (17/17)   Writing objects: 100% (17/17), 2.14 KiB | 0 bytes/s, done.
+Total 17 (delta 7), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/7)   [Kremote: Resolving deltas:  14% (1/7)   [Kremote: Resolving deltas:  28% (2/7)   [Kremote: Resolving deltas:  42% (3/7)   [Kremote: Resolving deltas:  57% (4/7)   [Kremote: Resolving deltas:  71% (5/7)   [Kremote: Resolving deltas:  85% (6/7)   [Kremote: Resolving deltas: 100% (7/7)   [Kremote: Resolving deltas: 100% (7/7), completed with 7 local objects.[K
+To https://github.com/tlsdmstn56/electricity-consumption-analysis-web-app.git
+   e57bfde..dfe8c42  master -> master
+]0;/home/es-shiny/electricity-consumption-analysis-web-app/consumption-analysis]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app/consumption-analysis[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app/consumption-analysis[00m$ bash deploy.ssh 
+[K[K[K[K[K[K[K[K[K[K[K --version
+R version 3.4.4 (2018-03-15) -- "Someone to Lean On"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under the terms of the
+GNU General Public License versions 2 or 3.
+For more information about these matters see
+http://www.gnu.org/licenses/.
+
+]0;/home/es-shiny/electricity-consumption-analysis-web-app]0;es-shiny@instance-1: ~/electricity-consumption-analysis-web-app[01;32mes-shiny@instance-1[00m:[01;34m~/electricity-consumption-analysis-web-app[00m$ R --version[Kgit pu[K[Kco[K[Kadd -A
