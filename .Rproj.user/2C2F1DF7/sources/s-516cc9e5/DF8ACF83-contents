@@ -3,7 +3,8 @@ library(shiny)
 library(DT)
 library(readr)
 library(dplyr)
-library(ggplot2)
+#library(ggplot2)
+#library(plotly)
 
 # Data Import
 data <- read_csv("../data/recs2015_clean.csv", locale=locale(tz="US/Pacific"))
@@ -76,8 +77,7 @@ ui <- fluidPage(
                                      downloadButton("download_plot1", "Download"), 
                                      br(),
                                      plotOutput("plot1")),
-                            tabPanel("Summary", 
-                                     downloadButton("download_summary1", "Download"), 
+                            tabPanel("Summary",
                                      verbatimTextOutput("summary1")),
                             tabPanel("Anova Test", 
                                      verbatimTextOutput("aov1"))
@@ -93,12 +93,28 @@ ui <- fluidPage(
                           verbatimTextOutput("var.desc2")),
                         mainPanel(
                           tabsetPanel(
-                            tabPanel("Box Plot", plotOutput("boxplot",
-                                                            height=4000,
-                                                            width=700)),
-                            tabPanel("Bar Chart", plotOutput("barchart",
-                                                             height=3000,
-                                                             width=700)),
+                            tabPanel("Box Plot",
+                                     br(),
+                                     tags$p("Press Download Button for bigger image"),
+                                     tags$div(
+                                       downloadButton("download_box2_split", 
+                                                      "Download(file by plots, .zip)"), 
+                                       downloadButton("download_box2_combined", 
+                                                      "Download(combined to one file, .jpeg)")
+                                     ),
+                                     br(),
+                                     plotOutput("boxplot", height=4000, width=1000)),
+                            tabPanel("Bar Chart",
+                                     br(),
+                                     tags$p("Press Download Button for bigger image"),
+                                     tags$div(
+                                       downloadButton("download_bar2_split", 
+                                                      "Download(file by plots, .zip)"), 
+                                       downloadButton("download_bar2_combined", 
+                                                      "Download(combined to one file, .jpeg)")
+                                     ),
+                                     br(),
+                                     plotOutput("barchart", height=3000, width=1000)),
                             tabPanel("Summary Table", tableOutput("summarytable"))
                             ),style="overflow-y:scroll") # end of main panel
              )),
@@ -132,12 +148,14 @@ q3 <- function(x){
 br <- function(){
   cat(' ',"\n")
 }
-
+isSecondgroupSet <- function(input) {
+  return("None"!=input$secondgroup & input$firstgroup!=input$secondgroup)
+}
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   renderPlot1 <- function(input) {
     firstgroup=as.factor(data[[input$firstgroup]])
-    if (input$secondgroup == "None" | input$firstgroup == input$secondgroup){
+    if (!isSecondgroupSet(input)){
       # only when first group is selected
       boxplot(data[['KWH']]~ firstgroup,
               xlab=input$firstgroup,
@@ -162,15 +180,14 @@ server <- function(input, output) {
     cat("Data Source: RECS2015(Residential Electricity Consumption Survey 2015)",end="\n")
     cat("   https://www.eia.gov/consumption/residential/data/2015/",end="\n")
     br()
-    cat("* MONEYPY: 소득",end="\n")
-    cat("* CLIMATE_REGION_PUB: 날씨(cold, very cold, hot dry,...)",end="\n")
-    cat("* TYPEHUQ: 주거 형태(mobile, single-family, apartment..",end="\n")
-    cat("* UATYP10: 도시, 시골",end="\n")
-    cat("* DIVISION: 지역(Census Division, New Englance, Pacific..)",end="\n")
-    cat("* HHSEX: 응답자 성별",end="\n")
-    cat("* HHAGE: 응답자 나이",end="\n")
-    cat("* EMPLOYHH: 응답자 고용 상태(fulltime, part time..)",end="\n")
-    
+    cat("* MONEYPY: income",end="\n")
+    cat("* CLIMATE_REGION_PUB: climate(cold, very cold, hot dry,...)",end="\n")
+    cat("* TYPEHUQ: Type of housing unit(mobile, single-family, apartment..",end="\n")
+    cat("* UATYP10: Census 2010 Urban Type(Urban, Rural)",end="\n")
+    cat("* DIVISION: Census Division(New Englance, Pacific..)",end="\n")
+    cat("* HHSEX: Respondent gender",end="\n")
+    cat("* HHAGE: Respondent age",end="\n")
+    cat("* EMPLOYHH: Respondent employment status(fulltime, part time..)",end="\n")
   })
   # variable desc side panel(total consumption panel)
   output$var.desc <- renderPrint({
@@ -179,7 +196,7 @@ server <- function(input, output) {
     cat(' ',end="\n")
     cat(unlist(codebook[codebook$name==input$firstgroup,3]),end="\n")
     # if user choose second group
-    if ("None"!=input$secondgroup & input$firstgroup!=input$secondgroup){
+    if (isSecondgroupSet(input)){
       cat("===========",end="\n")
       cat(input$secondgroup,end="\n")
       cat(' ',unlist(codebook[codebook$name==input$secondgroup,2
@@ -206,13 +223,14 @@ server <- function(input, output) {
       }
       jpeg_width = nr.levels*100
       jpeg(filename = filename, 
-           height=500, 
-           width=jpeg_width
+           height = 500, 
+           width = jpeg_width
            )
       renderPlot1(input)
       dev.off()
     }
   )
+  # rendering plot
   output$plot1 <- renderPlot({
     renderPlot1(input)
   })
@@ -221,7 +239,7 @@ server <- function(input, output) {
   output$summary1 <- renderPrint({
     cat("By",input$firstgroup,end="\n")
     print(make.summary.df(data,input$firstgroup))
-    if ("None"!=input$secondgroup & input$firstgroup!=input$secondgroup){
+    if (isSecondgroupSet(input)){
       # only when second group is selected
       cat(" ",end="\n")
       cat("By",input$secondgroup,end="\n")
@@ -232,11 +250,11 @@ server <- function(input, output) {
   # anova test tab panel(total consumption panel)
   output$aov1 <- renderPrint({
     total.consumption=data[['KWH']]
-    if (input$secondgroup == "None" | input$firstgroup == input$secondgroup){
+    if (!isSecondgroupSet(input)){
       # only when first group is selected
       cat("oneway ANOVA test of",input$firstgroup,end="\n")
       aov.result=aov(total.consumption~ as.factor(data[[input$firstgroup]]))
-    }else{
+    } else {
       # when first and second group are selected
       cat("twoway ANOVA test of",input$firstgroup,"and",input$secondgroup,end="\n")
       aov.result=aov(total.consumption~ as.factor(data[[input$firstgroup]])+as.factor(data[[input$secondgroup]]))
@@ -278,8 +296,48 @@ server <- function(input, output) {
       
     }
   })
-  
-  # rendering plot
+  output$download_box2_split <- downloadHandler(
+    filename=paste0("consumption_usage_by",input$firstgroup2,".zip"),
+    content=function(filename){
+      criterion <- input$firstgroup2
+      f.group <- as.factor(data[[criterion]])
+      nr.levels <- nlevels(f.group)
+      file_list = c()
+      for (col in 1:26){
+        idx <- KWH_COL_IDX[col]
+        desc <- USAGE_NAME[col]
+        tmp_filename <- paste("Mean KWH used by",desc,"\ngrouped by",criterion,sep="_",end=".jpeg")
+        file_list = c(file_list, tmp_filename)
+        jpeg(tmp_filename,height=400,width=400)
+        boxplot(data[[idx]]~f.group,xlab=criterion,ylab=paste("KWH used by\n",desc),
+                main=paste("Mean KWH used by",desc,"\ngrouped by",criterion),
+                range=3)
+        dev.off()
+      }
+      zip(zipfile = filename, files = file_list)
+    },
+    contentType = "application/zip"
+  )
+  output$download_box2_combined <- downloadHandler(
+    filename = paste0("consumption_usage_by",input$firstgroup2,"(combined).jpeg"),
+    content=function(filename){
+      criterion <- input$firstgroup2
+      f.group <- as.factor(data[[criterion]])
+      nr.levels <- nlevels(f.group)
+      jpeg(filename = filename, height=13*300, width = 2*300)
+      par(mfrow=c(13,2))
+      for (col in 1:26){
+        idx <- KWH_COL_IDX[col]
+        desc <- USAGE_NAME[col]
+        tmp_filename <- paste("Mean KWH used by",desc,"\ngrouped by",criterion,sep="_",end=".jpeg")
+        boxplot(data[[idx]]~f.group,xlab=criterion,ylab=paste("KWH used by\n",desc),
+                main=paste("Mean KWH used by",desc,"\ngrouped by",criterion),
+                range=3)
+        
+      }
+      dev.off()
+    }
+  )
   output$barchart <- renderPlot({
     criterion <- input$firstgroup2
     f.group <- as.factor(data[[criterion]])
@@ -290,15 +348,102 @@ server <- function(input, output) {
       summarise_all(funs(mean),rm.na=TRUE) 
     name=rownames(tmp)
     tmp <- tmp %>% slice(1:n()) %>% as.matrix
+    xmax = max(tmp[,2:27])
     for (col in 1:nr.levels){
       barplot(tmp[col,2:27]+0.05,
               horiz=TRUE, 
               names.arg=USAGE_NAME,
               main=name[col],
               las=1,
+              xlim=c(0,xmax+100),
               xlab="KWH(year)")
     }
   })
+  get.codebook.str <- function(input) {
+    desc <- unlist(codebook[codebook$name==input$firstgroup2,2])
+    coded <- unlist(codebook[codebook$name==input$firstgroup2,3])
+    text_out=""
+    text_out <- paste(input$firstgroup2, end = "\n")
+    text_out <- paste(text_out, '  :', desc, end = "\n\n")
+    text_out <- paste(text_out, coded, end="\n")
+    return(text_out)
+  }
+  output$download_bar2_split <- downloadHandler(
+    filename=paste0("consumption_usage_by",input$firstgroup2,".zip"),
+    content=function(filename){
+      # create plots
+      criterion <- input$firstgroup2
+      f.group <- as.factor(data[[criterion]])
+      nr.levels <- nlevels(f.group)
+      tmp <- data %>% select(criterion,KWH_COL_IDX) %>% group_by_(criterion) %>% 
+        summarise_all(funs(mean),rm.na=TRUE) 
+      name=rownames(tmp)
+      tmp <- tmp %>% slice(1:n()) %>% as.matrix
+      file_list=c()
+      for (col in 1:nr.levels){
+        tmp_filename <- paste0("[", name[col],"] consumption_usage_bar_plot.jpeg")
+        file_list <- c(file_list , tmp_filename)
+        jpeg(tmp_filename, height=800, width=500)
+        par(mar = c(7,15,3,1) )
+        xmax = max(tmp[col,2:27])
+        barplot(tmp[col,2:27]+0.05,
+                horiz=TRUE, 
+                names.arg=USAGE_NAME,
+                main=name[col],
+                las=1,
+                xlim=c(0,xmax+100),
+                xlab="KWH(year)")
+        dev.off()
+      }
+      # create codebook
+      codebook_filename <- "codebook.txt"
+      text_out <- get.codebook.str(input)
+      write(x = text_out, file = filename)
+      zip(zipfile = filename, files = c(codebook_filename, file_list))
+    },
+    contentType = "application/zip"
+  )
+  output$download_bar2_combined <- downloadHandler(
+    filename = paste0("consumption_usage_by",input$firstgroup2,"(combined).jpeg"),
+    content=function(filename){
+      criterion <- input$firstgroup2
+      f.group <- as.factor(data[[criterion]])
+      nr.levels <- nlevels(f.group)
+      # open device
+      jpeg(filename = filename, height = 700, width = 250*(nr.levels))
+      par(mfrow=c(1,nr.levels), mar=c(3,5,1,1), oma = c(10,3,3,3))
+      
+      tmp <- data %>% select(criterion,KWH_COL_IDX) %>% group_by_(criterion) %>% 
+        summarise_all(funs(mean),rm.na=TRUE) 
+      name=rownames(tmp)
+      tmp <- tmp %>% slice(1:n()) %>% as.matrix
+      xmax = max(tmp[,2:27])
+      for (col in 1:nr.levels){
+        if (col %% 5 == 1) {
+          barplot(tmp[col,2:27]+0.05,
+                  horiz=TRUE, 
+                  names.arg=USAGE_NAME,
+                  main=name[col],
+                  las=1,
+                  xlim=c(0,xmax+100),
+                  xlab="KWH(year)")
+        } else {
+          barplot(tmp[col,2:27]+0.05,
+                  horiz=TRUE, 
+                  names.arg=USAGE_NAME,
+                  main=name[col],
+                  las=1,
+                  xlab="KWH(year)",
+                  xlim=c(0,xmax+100),
+                  yaxt='n', 
+                  ann=FALSE)
+        }
+        
+      }
+     
+      dev.off()
+    }
+  )
   # rendering summary table for 2nd navpanel
   output$summarytable <- renderTable({
     criterion <- input$firstgroup2

@@ -1,5 +1,5 @@
 #!/bin/bash
-SRC_DIR=/srv/shiny-server/consumption-elec/
+SRC_DIR=/srv/shiny-server/test-consumption-elec/
 DATA_DIR=/srv/shiny-server/data/
 
 if [ ! -d $SRC_DIR ]; then
