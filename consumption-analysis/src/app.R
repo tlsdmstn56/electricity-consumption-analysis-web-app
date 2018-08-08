@@ -24,7 +24,10 @@ USAGE_DESC <- c('space hitting','AC(central, individual)','water heating',
 USAGE_DESC_TABLE <- data.frame(name=colnames(data)[KWH_COL_IDX])
 COLNAMES_IN_DROPDOWN <- names(data)
 DROPDOWN_MENU <- sort(COLNAMES_IN_DROPDOWN[1:242])
-
+TEMP_DIR <- tempdir()
+get.temp.path <- function(filename){
+  return(paste0(TEMP_DIR,"/",filename))
+}
 
 # Define UI for application
 #
@@ -320,15 +323,19 @@ server <- function(input, output) {
       for (col in 1:26){
         idx <- KWH_COL_IDX[col]
         desc <- USAGE_DESC[col]
-        tmp_filename <- paste("Mean KWH used by",desc,"\ngrouped by",criterion,sep="_",end=".jpeg")
+        tmp_filename <- paste("average_KWH_used_by",desc,sep="",end=".jpeg")
         file_list = c(file_list, tmp_filename)
+        tmp_filename <- get.temp.path(tmp_filename)
         jpeg(tmp_filename,height=400,width=400)
         boxplot(data[[idx]]~f.group,xlab=criterion,ylab=paste("KWH used by\n",desc),
-                main=paste("Mean KWH used by",desc,"\ngrouped by",criterion),
+                main=paste("Mean KWH used by",desc,"grouped by",criterion),
                 range=3)
         dev.off()
       }
+      wd.backup <- getwd()
+      setwd(TEMP_DIR)
       zip(zipfile = filename, files = file_list)
+      setwd(wd.backup)
     },
     contentType = "application/zip"
   )
@@ -397,6 +404,7 @@ server <- function(input, output) {
       for (col in 1:nr.levels){
         tmp_filename <- paste0("[", name[col],"] consumption_usage_bar_plot.jpeg")
         file_list <- c(file_list , tmp_filename)
+        tmp_filename <- get.temp.path(tmp_filename)
         jpeg(tmp_filename, height=800, width=500)
         par(mar = c(7,15,3,1) )
         xmax = max(tmp[col,2:27])
@@ -412,8 +420,11 @@ server <- function(input, output) {
       # create codebook
       codebook_filename <- "codebook.txt"
       text_out <- get.codebook.str(input)
-      write(x = text_out, file = filename)
+      write(x = text_out, file = get.temp.path(codebook_filename))
+      wd.backup <- getwd()
+      setwd(TEMP_DIR)
       zip(zipfile = filename, files = c(codebook_filename, file_list))
+      setwd(wd.backup)
     },
     contentType = "application/zip"
   )
@@ -425,7 +436,7 @@ server <- function(input, output) {
       nr.levels <- nlevels(f.group)
       # open device
       jpeg(filename = filename, height = 700, width = 250*(nr.levels))
-      par(mfrow=c(1,nr.levels), mar=c(3,5,1,1), oma = c(10,3,3,3))
+      par(mfrow=c(1,nr.levels), mar=c(3,5,1,1), oma = c(10,10,3,3))
       
       tmp <- data %>% select(criterion,KWH_COL_IDX) %>% group_by_(criterion) %>% 
         summarise_all(funs(mean),rm.na=TRUE) 

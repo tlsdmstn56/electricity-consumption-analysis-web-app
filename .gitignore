@@ -4,3 +4,4 @@ consumption-analysis/src/*.txt
 .Rproj.user/**
 .Rhistory
 .RData
+.Rproj.user
