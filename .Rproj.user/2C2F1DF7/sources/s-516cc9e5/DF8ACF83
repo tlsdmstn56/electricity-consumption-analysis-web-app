@@ -4,16 +4,16 @@
     "created" : 1533572719199.000,
     "dirty" : false,
     "encoding" : "UTF-8",
-    "folds" : "155|34|176|2|\n",
+    "folds" : "",
     "hash" : "0",
     "id" : "DF8ACF83",
-    "lastKnownWriteTime" : 1533681087,
-    "last_content_update" : 1533681087102,
+    "lastKnownWriteTime" : 1533751356,
+    "last_content_update" : 1533751358345,
     "path" : "~/electricity-consumption-analysis-web-app/consumption-analysis/src/app.R",
     "project_path" : "consumption-analysis/src/app.R",
     "properties" : {
-        "cursorPosition" : "21,55",
-        "scrollLine" : "0"
+        "cursorPosition" : "5,17",
+        "scrollLine" : "6"
     },
     "relative_order" : 1,
     "source_on_save" : false,
