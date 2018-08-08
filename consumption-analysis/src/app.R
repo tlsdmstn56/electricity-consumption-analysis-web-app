@@ -13,7 +13,7 @@ codebook <- read_csv("../data/codebook_final.csv",na = c("",""))
 # Constants
 KWH_COL_IDX <- grep("^KWH*",unlist(colnames(data)))
 KWH_COL_IDX <- KWH_COL_IDX[2:length(KWH_COL_IDX)]
-USAGE_NAME <- c('space hitting','AC(central, individual)','water heating',
+USAGE_DESC <- c('space hitting','AC(central, individual)','water heating',
              'all refrigerators','first refrigerators','second refrigerators',
              'freezers','cooking(stove, cooktop, oven)','microwave',
              'clothes washer','clothes dryer','dishwashers',
@@ -21,6 +21,7 @@ USAGE_NAME <- c('space hitting','AC(central, individual)','water heating',
              'air handler for heating','air handler for cooling',
              'evaporative cooler','ceiling fan','dehumidifiers','humidifiers',
              'swimming pool pump','hot tub pumps','hot tub heaters','etc')
+USAGE_DESC_TABLE <- data.frame(name=colnames(data)[KWH_COL_IDX])
 COLNAMES_IN_DROPDOWN <- names(data)
 DROPDOWN_MENU <- sort(COLNAMES_IN_DROPDOWN[1:242])
 
@@ -115,8 +116,26 @@ ui <- fluidPage(
                                      ),
                                      br(),
                                      plotOutput("barchart", height=3000, width=1000)),
-                            tabPanel("Summary Table", tableOutput("summarytable"))
-                            ),style="overflow-y:scroll") # end of main panel
+                            tabPanel("Summary Table", 
+                                     htmlOutput("summary_table_header_avg"),
+                                     br(),
+                                     tags$div(
+                                       downloadButton("download_summary2_avg", 
+                                                      "Download(average, .csv)")
+                                     ),
+                                     br(),
+                                     tableOutput("summarytable_avg"),
+                            
+                                     br(),
+                                     htmlOutput("summary_table_header_percentage"),
+                                     br(),
+                                     tags$div(
+                                       downloadButton("download_summary2_percentage",
+                                                      "Download(percentage, csv)")
+                                     ),
+                                     br(),
+                                     tableOutput("summarytable_percentage")
+                            )),style="overflow-y:scroll") # end of main panel
              )),
              # code book for variable description
              tabPanel("Codebook", dataTableOutput('codebook.df'))
@@ -138,13 +157,8 @@ make.summary.df <- function(data,name){
   return(tapp)
 }
 
+
 # helper functions
-q1 <- function(x){
-  quantile(x,0.25)
-}
-q3 <- function(x){
-  quantile(x,0.75)
-}
 br <- function(){
   cat(' ',"\n")
 }
@@ -289,7 +303,7 @@ server <- function(input, output) {
     par(mfrow=c(13,2))
     for (col in 1:26){
       idx <- KWH_COL_IDX[col]
-      desc <- USAGE_NAME[col]
+      desc <- USAGE_DESC[col]
       boxplot(data[[idx]]~f.group,xlab=criterion,ylab=paste("KWH used by\n",desc),
               main=paste("Mean KWH used by",desc,"\ngrouped by",criterion),
               range=3)
@@ -305,7 +319,7 @@ server <- function(input, output) {
       file_list = c()
       for (col in 1:26){
         idx <- KWH_COL_IDX[col]
-        desc <- USAGE_NAME[col]
+        desc <- USAGE_DESC[col]
         tmp_filename <- paste("Mean KWH used by",desc,"\ngrouped by",criterion,sep="_",end=".jpeg")
         file_list = c(file_list, tmp_filename)
         jpeg(tmp_filename,height=400,width=400)
@@ -328,7 +342,7 @@ server <- function(input, output) {
       par(mfrow=c(13,2))
       for (col in 1:26){
         idx <- KWH_COL_IDX[col]
-        desc <- USAGE_NAME[col]
+        desc <- USAGE_DESC[col]
         tmp_filename <- paste("Mean KWH used by",desc,"\ngrouped by",criterion,sep="_",end=".jpeg")
         boxplot(data[[idx]]~f.group,xlab=criterion,ylab=paste("KWH used by\n",desc),
                 main=paste("Mean KWH used by",desc,"\ngrouped by",criterion),
@@ -352,7 +366,7 @@ server <- function(input, output) {
     for (col in 1:nr.levels){
       barplot(tmp[col,2:27]+0.05,
               horiz=TRUE, 
-              names.arg=USAGE_NAME,
+              names.arg=USAGE_DESC,
               main=name[col],
               las=1,
               xlim=c(0,xmax+100),
@@ -388,7 +402,7 @@ server <- function(input, output) {
         xmax = max(tmp[col,2:27])
         barplot(tmp[col,2:27]+0.05,
                 horiz=TRUE, 
-                names.arg=USAGE_NAME,
+                names.arg=USAGE_DESC,
                 main=name[col],
                 las=1,
                 xlim=c(0,xmax+100),
@@ -422,7 +436,7 @@ server <- function(input, output) {
         if (col %% 5 == 1) {
           barplot(tmp[col,2:27]+0.05,
                   horiz=TRUE, 
-                  names.arg=USAGE_NAME,
+                  names.arg=USAGE_DESC,
                   main=name[col],
                   las=1,
                   xlim=c(0,xmax+100),
@@ -430,7 +444,7 @@ server <- function(input, output) {
         } else {
           barplot(tmp[col,2:27]+0.05,
                   horiz=TRUE, 
-                  names.arg=USAGE_NAME,
+                  names.arg=USAGE_DESC,
                   main=name[col],
                   las=1,
                   xlab="KWH(year)",
@@ -438,26 +452,73 @@ server <- function(input, output) {
                   yaxt='n', 
                   ann=FALSE)
         }
-        
       }
-     
       dev.off()
     }
   )
-  # rendering summary table for 2nd navpanel
-  output$summarytable <- renderTable({
+  
+  
+  # rendering summary table for 2nd navpane
+  get.average.table.consumption.usage <- function(input) {
     criterion <- input$firstgroup2
-    tmp <- data %>% select(criterion,KWH_COL_IDX) 
-    tmp.mean <- tmp %>% summarise_all(funs(mean))
-    tmp.med <- tmp %>% summarise_all(funs(median))
-    tmp.q1 <- tmp %>% summarise_all(funs(quantile),probs=0.25)
-    tmp.q3 <- tmp %>% summarise_all(funs(quantile),probs=0.75)
-    rs <- t(rbind(Q1=tmp.q1,MEAN=tmp.mean,MEDIAN=tmp.med,Q3=tmp.q3))
-    rs <- rs[2:NROW(rs),]
-    rs <- cbind(rs,description=USAGE_NAME)
-    return(rs)
+    f.group <- as.factor(data[[criterion]])
+    nr.levels <- nlevels(f.group)
+    tmp <- data %>% select(criterion, KWH_COL_IDX) %>% group_by_(criterion) %>% 
+      summarise_all(funs(mean),rm.na=TRUE) 
+    name=rownames(tmp)
+    tmp <- tmp %>% slice(1:n()) %>% as.matrix %>% t
+    tmp <- tmp[-1,]
+    colnames(tmp) <- name
+    rownames(tmp) <- USAGE_DESC
+    return(tmp)
+  }
+  output$summary_table_header_avg <- renderUI({
+    div(
+      h3( paste0("Summary Table By ",input$firstgroup2) ),
+      p(paste0("Yearly Average Consumption Usage by ",
+               input$firstgroup2,".")) 
+    )
+  })
+  output$summarytable_avg <- renderTable({
+    return(get.average.table.consumption.usage(input))
   }, rownames=TRUE)
   
+  output$download_summary2_avg <- downloadHandler(
+    filename = paste0("mean_consumption_usage_by_",input$firstgroup2,".csv"),
+    content = function(filename){
+      csv_out <- get.average.table.consumption.usage(input)
+      write.csv(x=csv_out, file=filename, row.names = TRUE)
+    }
+  )
+  
+  get.percentage.table.consumption.usage <- function(input) {
+    tmp <- get.average.table.consumption.usage(input)
+    column.sum <- colSums(tmp)
+    tmp <- sweep(tmp,MARGIN=2,column.sum,`/`)
+    tmp <- rbind(tmp, rep(x = 1, times = NCOL(tmp)))
+    tmp <- round(tmp, 3)
+    rownames(tmp)[NROW(tmp)] <- "TOTAL"
+    return(tmp)
+  }
+  
+  output$summary_table_header_percentage <- renderUI({
+    div(
+      h3( paste0("Summary Table(Percentage) By ",input$firstgroup2) ),
+      p(paste0("Yearly Consumption Usage Percentage by ",
+               input$firstgroup2,".")) 
+    )
+  })
+  output$summarytable_percentage <- renderTable({
+    return(get.percentage.table.consumption.usage(input))
+  }, rownames=TRUE)
+  
+  output$download_summary2_percentage <- downloadHandler(
+    filename = paste0("percentage_consumption_usage_by_",input$firstgroup2,".csv"),
+    content = function(filename){
+      csv_out <- get.percentage.table.consumption.usage(input)
+      write.csv(x=csv_out, file=filename, row.names = TRUE)
+    }
+  )
   
   ## panel 3
   output$codebook.df <- renderDataTable(
