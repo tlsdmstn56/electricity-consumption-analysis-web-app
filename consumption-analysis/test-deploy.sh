@@ -2,6 +2,8 @@
 SRC_DIR=/srv/shiny-server/test-consumption-elec/
 DATA_DIR=/srv/shiny-server/data/
 
+sudo rm -rf $SRC_DIR
+
 if [ ! -d $SRC_DIR ]; then
     sudo mkdir $SRC_DIR
 fi

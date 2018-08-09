@@ -1,33 +1,38 @@
+load.package <- function(package){
+  if(!require(package,character.only = TRUE )){
+    install.packages(package)
+    library(package,character.only = TRUE)
+  } 
+}
+
 # ibrary import
-library(shiny)
-library(DT)
-library(readr)
-library(dplyr)
-#library(ggplot2)
+load.package("shiny")
+load.package("DT")
+load.package("readr")
+load.package("dplyr")
+load.package("jsonlite")
+load.package("ggplot2")
 #library(plotly)
 
 # Data Import
 data <- read_csv("../data/recs2015_clean.csv", locale=locale(tz="US/Pacific"))
-codebook <- read_csv("../data/codebook_final.csv",na = c("",""))
-
+codebook <- read_csv("../data/codebook_final_with_type.csv",na = c("",""))
+CODEBOOK_JSON <- fromJSON("../data/codebook_final.json")
 # Constants
 KWH_COL_IDX <- grep("^KWH*",unlist(colnames(data)))
 KWH_COL_IDX <- KWH_COL_IDX[2:length(KWH_COL_IDX)]
 USAGE_DESC <- c('space hitting','AC(central, individual)','water heating',
-             'all refrigerators','first refrigerators','second refrigerators',
-             'freezers','cooking(stove, cooktop, oven)','microwave',
-             'clothes washer','clothes dryer','dishwashers',
-             'lighting(indor, outdoor)','all TV','first tv','second tv',
-             'air handler for heating','air handler for cooling',
-             'evaporative cooler','ceiling fan','dehumidifiers','humidifiers',
-             'swimming pool pump','hot tub pumps','hot tub heaters','etc')
+                'all refrigerators','first refrigerators','second refrigerators',
+                'freezers','cooking(stove, cooktop, oven)','microwave',
+                'clothes washer','clothes dryer','dishwashers',
+                'lighting(indor, outdoor)','all TV','first tv','second tv',
+                'air handler for heating','air handler for cooling',
+                'evaporative cooler','ceiling fan','dehumidifiers','humidifiers',
+                'swimming pool pump','hot tub pumps','hot tub heaters','etc')
 USAGE_DESC_TABLE <- data.frame(name=colnames(data)[KWH_COL_IDX])
 COLNAMES_IN_DROPDOWN <- names(data)
 DROPDOWN_MENU <- sort(COLNAMES_IN_DROPDOWN[1:242])
 TEMP_DIR <- tempdir()
-get.temp.path <- function(filename){
-  return(paste0(TEMP_DIR,"/",filename))
-}
 
 # Define UI for application
 #
@@ -55,7 +60,7 @@ ui <- fluidPage(
   # title
   titlePanel("Consumption Analysis", windowTitle="Consumption Analysis"),
   # guide(frequent used variables, data source, some infos)
-  verbatimTextOutput('guide'),
+  htmlOutput('guide'),
   # Navigation Bar on the top
   navbarPage("Menu",
              # Total Consumption Tab
@@ -71,7 +76,7 @@ ui <- fluidPage(
                                       "Second Criterion",
                                       c("None",DROPDOWN_MENU)),
                           # group description
-                          verbatimTextOutput("var.desc")),
+                          htmlOutput("var.desc")),
                         # plots and summary, anova
                         mainPanel(
                           tabsetPanel(
@@ -85,15 +90,15 @@ ui <- fluidPage(
                                      verbatimTextOutput("summary1")),
                             tabPanel("Anova Test", 
                                      verbatimTextOutput("aov1"))
-                            )) # end of main panel
-             )),
+                          )) # end of main panel
+                      )),
              # Consumption Usage tab
              tabPanel("Consumption Usage",
                       sidebarLayout(
                         # for group selection
                         sidebarPanel(
                           selectInput("firstgroup2", "Criterion",
-                             sort(COLNAMES_IN_DROPDOWN[1:242])),
+                                      sort(COLNAMES_IN_DROPDOWN[1:242])),
                           verbatimTextOutput("var.desc2")),
                         mainPanel(
                           tabsetPanel(
@@ -128,7 +133,7 @@ ui <- fluidPage(
                                      ),
                                      br(),
                                      tableOutput("summarytable_avg"),
-                            
+                                     
                                      br(),
                                      htmlOutput("summary_table_header_percentage"),
                                      br(),
@@ -139,10 +144,10 @@ ui <- fluidPage(
                                      br(),
                                      tableOutput("summarytable_percentage")
                             )),style="overflow-y:scroll") # end of main panel
-             )),
+                      )),
              # code book for variable description
              tabPanel("Codebook", dataTableOutput('codebook.df'))
-             )
+  )
 )
 
 # utility functions
@@ -159,7 +164,9 @@ make.summary.df <- function(data,name){
   tapp=do.call(rbind,tapp)
   return(tapp)
 }
-
+get.temp.path <- function(filename){
+  return(paste0(TEMP_DIR,"/",filename))
+}
 
 # helper functions
 br <- function(){
@@ -168,43 +175,74 @@ br <- function(){
 isSecondgroupSet <- function(input) {
   return("None"!=input$secondgroup & input$firstgroup!=input$secondgroup)
 }
+
+make.column.factor <- function(group) {
+  factor.coded <- names(CODEBOOK_JSON[[group]]$coded)
+  factor.label <- unlist(CODEBOOK_JSON[[group]]$coded[factor.coded])
+  factored <- factor(data[[group]],
+                     levels = factor.coded,
+                     labels = factor.label)
+  return(factored)
+}
+is.continuous <- function(group) {
+  rs <- (codebook %>% filter(name==group) %>% select(4) %>% as.logical)
+  return(rs)
+}
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   renderPlot1 <- function(input) {
-    firstgroup=as.factor(data[[input$firstgroup]])
+    firstgroup <- make.column.factor(input$firstgroup)
+    kwh <- data[['KWH']]
     if (!isSecondgroupSet(input)){
       # only when first group is selected
-      boxplot(data[['KWH']]~ firstgroup,
-              xlab=input$firstgroup,
-              ylab="Total Consumption of Electricity(KWH, 1 year)",
-              main=paste("Box Plot of total consumption by",input$firstgroup,sep=" "),
-              range=3
-      )
+      
+      p <- ggplot(mapping=aes(y=kwh, x=firstgroup)) + 
+        geom_boxplot() + xlab(input$firstgroup) +
+        labs(title=paste("Box Plot of total consumption by",input$firstgroup))
+      p
+      # boxplot(data[['KWH']]~ firstgroup,
+      #         main=paste("Box Plot of total consumption by",input$firstgroup,sep=" "),
+      #         range=3,
+      #         las=2
+      # )
+      # title(ylab="Total Consumption of Electricity(KWH, 1 year)",line = 4)
     } else{
       # when first and second group was selected
-      boxplot(data[['KWH']]~ firstgroup*as.factor(data[[input$secondgroup]]),
-              xlab=paste("Legend: ",input$firstgroup,".", input$secondgroup,sep=""),
-              ylab="Total Consumption of Electricity(KWH, 1 year)",
-              main=paste("Box Plot of total consumption by\n",
-                         input$firstgroup,"and",input$secondgroup,sep=" "),
-              col=rainbow(nlevels(firstgroup)),
-              range=3
-      )
+      secondgroup <- make.column.factor(input$secondgroup)
+      # boxplot(data[['KWH']]~ firstgroup*secondgroup,
+      #         xlab=paste("Legend: ",input$firstgroup,".", input$secondgroup,sep=""),
+      #         ylab="Total Consumption of Electricity(KWH, 1 year)",
+      #         main=paste("Box Plot of total consumption by\n",
+      #                    input$firstgroup,"and",input$secondgroup,sep=" "),
+      #         col=rainbow(nlevels(firstgroup)),
+      #         range=3
+      # )
+      p <- ggplot(mapping=aes(y=kwh, x=firstgroup, fill=secondgroup)) + 
+        geom_boxplot() + xlab(input$firstgroup) + 
+        labs(title=paste("Box Plot of total consumption by",
+                         input$firstgroup,"and",input$secondgroup)) +
+        labs(fill = input$secondgroup)
+      p
     }
   }
   # for guide(frequent used variables, data source, some infos) on the top 
-  output$guide<-renderPrint({
-    cat("Data Source: RECS2015(Residential Electricity Consumption Survey 2015)",end="\n")
-    cat("   https://www.eia.gov/consumption/residential/data/2015/",end="\n")
-    br()
-    cat("* MONEYPY: income",end="\n")
-    cat("* CLIMATE_REGION_PUB: climate(cold, very cold, hot dry,...)",end="\n")
-    cat("* TYPEHUQ: Type of housing unit(mobile, single-family, apartment..",end="\n")
-    cat("* UATYP10: Census 2010 Urban Type(Urban, Rural)",end="\n")
-    cat("* DIVISION: Census Division(New Englance, Pacific..)",end="\n")
-    cat("* HHSEX: Respondent gender",end="\n")
-    cat("* HHAGE: Respondent age",end="\n")
-    cat("* EMPLOYHH: Respondent employment status(fulltime, part time..)",end="\n")
+  output$guide<-renderUI({
+    tagList(
+      p("Data Source: ",
+        a(href="https://www.eia.gov/consumption/residential/data/2015/", 
+          "RECS2015(Residential Electricity Consumption Survey 2015)")),
+      br(),
+      tags$ul(
+        tags$li("MONEYPY: income"),
+        tags$li("CLIMATE_REGION_PUB: climate(cold, very cold, hot dry,...)"),
+        tags$li("TYPEHUQ: Type of housing unit(mobile, single-family, apartment..)"),
+        tags$li("UATYP10: Census 2010 Urban Type(Urban, Rural)"),
+        tags$li("DIVISION: Census Division(New Englance, Pacific..)"),
+        tags$li("HHSEX: Respondent gender"),
+        tags$li("HHAGE: Respondent age"),
+        tags$li("EMPLOYHH: Respondent employment status(fulltime, part time..)")
+    )
+  )
   })
   # variable desc side panel(total consumption panel)
   output$var.desc <- renderPrint({
@@ -216,8 +254,7 @@ server <- function(input, output) {
     if (isSecondgroupSet(input)){
       cat("===========",end="\n")
       cat(input$secondgroup,end="\n")
-      cat(' ',unlist(codebook[codebook$name==input$secondgroup,2
-                              ]),end="\n")
+      cat(' ',unlist(codebook[codebook$name==input$secondgroup,2]),end="\n")
       cat(' ',end="\n")
       cat(unlist(codebook[codebook$name==input$secondgroup,3]),end="\n")
     }
@@ -227,7 +264,7 @@ server <- function(input, output) {
   output$download_plot1 <- downloadHandler(
     filename=function(){
       filename <- paste0(Sys.Date(),"_",input$firstgroup)
-      if ("None"!=input$secondgroup & input$firstgroup!=input$secondgroup) {
+      if (isSecondgroupSet(input)) {
         filename <- paste0(filename,"_",input$secondgroup)
       }
       filename <- paste0(filename,"_boxplot.jpeg")
@@ -235,16 +272,16 @@ server <- function(input, output) {
     },
     content=function(filename){
       nr.levels <- nlevels(data[[input$firstgroup]] %>% as.factor)
-      if ("None"!=input$secondgroup & input$firstgroup!=input$secondgroup){
+      if (isSecondgroupSet(input)){
         nr.levels <- nr.levels * nlevels(data[[input$secondgroup]] %>% as.factor)
       }
-      jpeg_width = nr.levels*100
-      jpeg(filename = filename, 
-           height = 500, 
-           width = jpeg_width
-           )
-      renderPlot1(input)
-      dev.off()
+      jpeg_width = nr.levels*10
+      ggsave(filename = filename,
+             height = 15,
+             width = jpeg_width,
+             device = "jpeg",
+             units="cm"
+             )
     }
   )
   # rendering plot
@@ -300,8 +337,7 @@ server <- function(input, output) {
   })
   # rendering bar plot tabpanel
   output$boxplot <- renderPlot({
-    criterion <- input$firstgroup2
-    f.group <- as.factor(data[[criterion]])
+    f.group <- make.column.factor(input$firstgroup2)
     nr.levels <- nlevels(f.group)
     par(mfrow=c(13,2))
     for (col in 1:26){
@@ -533,11 +569,11 @@ server <- function(input, output) {
   
   ## panel 3
   output$codebook.df <- renderDataTable(
-    datatable(codebook[1:(NROW(codebook)-2),], 
+    datatable(codebook, 
               options = list(
                 paging = TRUE,
                 pageLength = 20
-                ))
+      ))
     )
 }
 

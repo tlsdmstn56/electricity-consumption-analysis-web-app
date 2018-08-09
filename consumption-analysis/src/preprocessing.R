@@ -1,21 +1,25 @@
 library(readr)
 library(dplyr)
 
-# codebook cleasing
-codebook <- readxl::read_xlsx("./data/codebook2015_public_v3.xlsx",skip = 3)
-
+# codebook preprocessing
+codebook <- readxl::read_xlsx("../data/codebook2015_public_v3.xlsx",skip = 3)
 codebook <- data.frame(name=codebook$`SAS Variable Name`,
                       desc=codebook$`Variable Description`,
                       coded=codebook$X__1,
-                      cat=codebook$`Final Response Set`
-                      )
+                      cat=codebook$`Final Response Set`)
 cat.table <- rep(0,NROW(codebook))
-for(i in seq(1:NROW(codebook))) {
+for(i in 1:NROW(codebook)) {
   code <- strsplit(as.character(codebook[i,3]),"\r\n")
   cat <- strsplit(as.character(codebook[i,4]),"\r\n")
   rs <- ""
-  for(j in 1:NROW(cat[[1]])){
-    rs <- paste(rs,code[[1]][j],"\t",cat[[1]][j],sep="",end="\n")
+  if (is.na(code)){
+    for(j in 1:NROW(cat[[1]])){
+      rs <- paste(rs,cat[[1]][j],sep="",end="\n")
+    }
+  } else {
+    for(j in 1:NROW(cat[[1]])){
+      rs <- paste(rs,code[[1]][j],"\t",cat[[1]][j],sep="",end="\n")
+    }
   }
   cat.table[i]=rs
 }
@@ -51,9 +55,11 @@ codebook_final <- drop.codebook.row(codebook_final,"TOTAL")
 codebook_final <- drop.codebook.row(codebook_final,"FUEL")
 codebook_final <- drop.codebook.row(codebook_final,"^TOT*")
 
-write.csv(codebook_final,"./data/codebook_final.csv",row.names=FALSE)
+codebook_final <- codebook_final[1:335,]
+write.csv(codebook_final,"../data/codebook_final.csv",row.names=FALSE)
 
-# data cleasing
+
+# drop unnecessary columns in raw dataset
 data <- read_csv("./data/recs2015_public_v3.csv", locale=locale(tz="US/Pacific"))
 drop.column.re <- function(data, pattern, ask=FALSE){
   # iteractively drop column
