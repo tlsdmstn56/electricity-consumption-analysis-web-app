@@ -101,7 +101,7 @@ ui <- fluidPage(
                         sidebarPanel(
                           selectInput("p2_criterion", "Criterion",
                                       sort(COLNAMES_IN_DROPDOWN[1:242])),
-                          verbatimTextOutput("p2_var_desc")),
+                          htmlOutput("p2_var_desc")),
                         mainPanel(
                           tabsetPanel(
                             tabPanel("Box Plot",
@@ -348,13 +348,15 @@ server <- function(input, output, session) {
   })
   
   # variable description panel(consumption usage page)
-  output$p2_var_desc <- renderPrint({
+  output$p2_var_desc <- renderUI({
     desc <- unlist(CODEBOOK[CODEBOOK$name==input$p2_criterion,2])
     coded <- unlist(CODEBOOK[CODEBOOK$name==input$p2_criterion,3])
-    cat(input$p2_criterion, end="\n")
-    cat('  :',desc,end="\n")
-    br()
-    cat(coded,end="\n")
+    tagList(
+      h3(input$p2_criterion),
+      p(desc),
+      br(),
+      pre(coded)
+    )
   })
   # rendering bar plot tabpanel
   output$p2_boxplot <- renderPlot({
