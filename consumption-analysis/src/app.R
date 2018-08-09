@@ -244,7 +244,6 @@ server <- function(input, output, session) {
       p("Data Source: ",
         a(href="https://www.eia.gov/consumption/residential/data/2015/", 
           "RECS2015(Residential Electricity Consumption Survey 2015)")),
-      br(),
       tags$ul(
         tags$li("MONEYPY: income"),
         tags$li("CLIMATE_REGION_PUB: climate(cold, very cold, hot dry,...)"),
