@@ -15,11 +15,11 @@ load.package("ggplot2")
 #library(plotly)
 
 # Data Import
-data <- read_csv("../data/recs2015_clean.csv", locale=locale(tz="US/Pacific"))
-codebook <- read_csv("../data/codebook_final_with_type.csv",na = c("",""))
+DATA <- read_csv("../data/recs2015_clean.csv", locale=locale(tz="US/Pacific"))
+CODEBOOK <- read_csv("../data/codebook_final_with_type.csv",na = c("",""))
 CODEBOOK_JSON <- fromJSON("../data/codebook_final.json")
 # Constants
-KWH_COL_IDX <- grep("^KWH*",unlist(colnames(data)))
+KWH_COL_IDX <- grep("^KWH*",unlist(colnames(DATA)))
 KWH_COL_IDX <- KWH_COL_IDX[2:length(KWH_COL_IDX)]
 USAGE_DESC <- c('space hitting','AC(central, individual)','water heating',
                 'all refrigerators','first refrigerators','second refrigerators',
@@ -29,8 +29,8 @@ USAGE_DESC <- c('space hitting','AC(central, individual)','water heating',
                 'air handler for heating','air handler for cooling',
                 'evaporative cooler','ceiling fan','dehumidifiers','humidifiers',
                 'swimming pool pump','hot tub pumps','hot tub heaters','etc')
-USAGE_DESC_TABLE <- data.frame(name=colnames(data)[KWH_COL_IDX])
-COLNAMES_IN_DROPDOWN <- names(data)
+USAGE_DESC_TABLE <- data.frame(name=colnames(DATA)[KWH_COL_IDX])
+COLNAMES_IN_DROPDOWN <- names(DATA)
 DROPDOWN_MENU <- sort(COLNAMES_IN_DROPDOWN[1:242])
 TEMP_DIR <- tempdir()
 
@@ -68,28 +68,28 @@ ui <- fluidPage(
                       sidebarLayout(
                         sidebarPanel(
                           # first group
-                          selectInput("firstgroup", 
+                          selectInput("p1_criterion1", 
                                       "First Criterion",
                                       DROPDOWN_MENU),
                           # second group
-                          selectInput("secondgroup", 
+                          selectInput("p1_criterion2", 
                                       "Second Criterion",
                                       c("None",DROPDOWN_MENU)),
                           # group description
-                          htmlOutput("var.desc")),
+                          htmlOutput("p1_var_desc")),
                         # plots and summary, anova
                         mainPanel(
                           tabsetPanel(
                             tabPanel("Plot", 
                                      br(),
                                      tags$p("Press Download Button for bigger image"),
-                                     downloadButton("download_plot1", "Download"), 
+                                     downloadButton("p1_download_boxplot", "Download"), 
                                      br(),
-                                     plotOutput("plot1")),
+                                     plotOutput("p1_boxplot")),
                             tabPanel("Summary",
-                                     verbatimTextOutput("summary1")),
+                                     verbatimTextOutput("p1_summary")),
                             tabPanel("Anova Test", 
-                                     verbatimTextOutput("aov1"))
+                                     verbatimTextOutput("p1_aov"))
                           )) # end of main panel
                       )),
              # Consumption Usage tab
@@ -97,52 +97,52 @@ ui <- fluidPage(
                       sidebarLayout(
                         # for group selection
                         sidebarPanel(
-                          selectInput("firstgroup2", "Criterion",
+                          selectInput("p2_criterion", "Criterion",
                                       sort(COLNAMES_IN_DROPDOWN[1:242])),
-                          verbatimTextOutput("var.desc2")),
+                          verbatimTextOutput("p2_var_desc")),
                         mainPanel(
                           tabsetPanel(
                             tabPanel("Box Plot",
                                      br(),
                                      tags$p("Press Download Button for bigger image"),
                                      tags$div(
-                                       downloadButton("download_box2_split", 
+                                       downloadButton("p2_download_boxplot_split", 
                                                       "Download(file by plots, .zip)"), 
-                                       downloadButton("download_box2_combined", 
+                                       downloadButton("p2_download_boxplot_combined", 
                                                       "Download(combined to one file, .jpeg)")
                                      ),
                                      br(),
-                                     plotOutput("boxplot", height=4000, width=1000)),
+                                     plotOutput("p2_boxplot", height=4000, width=1000)),
                             tabPanel("Bar Chart",
                                      br(),
                                      tags$p("Press Download Button for bigger image"),
                                      tags$div(
-                                       downloadButton("download_bar2_split", 
+                                       downloadButton("p2_download_barplot_split", 
                                                       "Download(file by plots, .zip)"), 
-                                       downloadButton("download_bar2_combined", 
+                                       downloadButton("p2_download_barplot_combined", 
                                                       "Download(combined to one file, .jpeg)")
                                      ),
                                      br(),
-                                     plotOutput("barchart", height=3000, width=1000)),
+                                     plotOutput("p2_barplot", height=3000, width=1000)),
                             tabPanel("Summary Table", 
-                                     htmlOutput("summary_table_header_avg"),
+                                     htmlOutput("p2_summary_header_avg"),
                                      br(),
                                      tags$div(
-                                       downloadButton("download_summary2_avg", 
+                                       downloadButton("p2_download_summary_avg", 
                                                       "Download(average, .csv)")
                                      ),
                                      br(),
-                                     tableOutput("summarytable_avg"),
+                                     tableOutput("p2_summary_avg"),
                                      
                                      br(),
-                                     htmlOutput("summary_table_header_percentage"),
+                                     htmlOutput("p2_summary_header_percentage"),
                                      br(),
                                      tags$div(
-                                       downloadButton("download_summary2_percentage",
+                                       downloadButton("p2_download_summary_percentage",
                                                       "Download(percentage, csv)")
                                      ),
                                      br(),
-                                     tableOutput("summarytable_percentage")
+                                     tableOutput("p2_summary_percentage")
                             )),style="overflow-y:scroll") # end of main panel
                       )),
              # code book for variable description
@@ -164,64 +164,73 @@ make.summary.df <- function(data,name){
   tapp=do.call(rbind,tapp)
   return(tapp)
 }
+
 get.temp.path <- function(filename){
   return(paste0(TEMP_DIR,"/",filename))
 }
 
-# helper functions
-br <- function(){
-  cat(' ',"\n")
-}
 isSecondgroupSet <- function(input) {
-  return("None"!=input$secondgroup & input$firstgroup!=input$secondgroup)
+  # check p1_criterion2 is set
+  #
+  # Args:
+  #   input: server function's input
+  #
+  # Returns:
+  #   logical value: true when p1_criterion2 is set, otherwise false
+  return("None"!=input$p1_criterion2 & input$p1_criterion1!=input$p1_criterion2)
 }
 
 make.column.factor <- function(group) {
+  # get factorized vector whose labels and levels are properly set
+  #
+  # Args:
+  #   group: name of group(column) to be factorized
+  #
+  # Returns:
+  #   vector(factor): factor vector with properly labeld
   factor.coded <- names(CODEBOOK_JSON[[group]]$coded)
   factor.label <- unlist(CODEBOOK_JSON[[group]]$coded[factor.coded])
-  factored <- factor(data[[group]],
+  factored <- factor(DATA[[group]],
                      levels = factor.coded,
                      labels = factor.label)
   return(factored)
 }
+
 is.continuous <- function(group) {
-  rs <- (codebook %>% filter(name==group) %>% select(4) %>% as.logical)
+  # check given group is continuous
+  #
+  # Args:
+  #   group: name of group(column) to have 
+  #          checked if it is continuous
+  #
+  # Returns:
+  #   logical: true if given group is contiuous
+  rs <- (CODEBOOK %>% filter(name==group) %>% select(4) %>% as.logical)
   return(rs)
 }
+
+
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  renderPlot1 <- function(input) {
-    firstgroup <- make.column.factor(input$firstgroup)
-    kwh <- data[['KWH']]
+  render.p1.boxplot <- function(input) {
+    vector_c1 <- make.column.factor(input$p1_criterion1)
+    kwh <- DATA[['KWH']]
     if (!isSecondgroupSet(input)){
       # only when first group is selected
-      
-      p <- ggplot(mapping=aes(y=kwh, x=firstgroup)) + 
-        geom_boxplot() + xlab(input$firstgroup) +
-        labs(title=paste("Box Plot of total consumption by",input$firstgroup))
+      p <- ggplot(mapping=aes(y=kwh, x=vector_c1)) + 
+        geom_boxplot() + xlab(input$p1_criterion1) +
+        labs(title=paste("Box Plot of total consumption by",input$p1_criterion1))
       p
-      # boxplot(data[['KWH']]~ firstgroup,
-      #         main=paste("Box Plot of total consumption by",input$firstgroup,sep=" "),
-      #         range=3,
-      #         las=2
-      # )
-      # title(ylab="Total Consumption of Electricity(KWH, 1 year)",line = 4)
     } else{
       # when first and second group was selected
-      secondgroup <- make.column.factor(input$secondgroup)
-      # boxplot(data[['KWH']]~ firstgroup*secondgroup,
-      #         xlab=paste("Legend: ",input$firstgroup,".", input$secondgroup,sep=""),
-      #         ylab="Total Consumption of Electricity(KWH, 1 year)",
-      #         main=paste("Box Plot of total consumption by\n",
-      #                    input$firstgroup,"and",input$secondgroup,sep=" "),
-      #         col=rainbow(nlevels(firstgroup)),
-      #         range=3
-      # )
-      p <- ggplot(mapping=aes(y=kwh, x=firstgroup, fill=secondgroup)) + 
-        geom_boxplot() + xlab(input$firstgroup) + 
-        labs(title=paste("Box Plot of total consumption by",
-                         input$firstgroup,"and",input$secondgroup)) +
-        labs(fill = input$secondgroup)
+      vector_c2 <- make.column.factor(input$p1_criterion2)
+      p <- ggplot(mapping = aes(y = kwh, 
+                                x = firstgroup, 
+                                fill = vector_c2)) + 
+        geom_boxplot() + xlab(input$p1_criterion1) + 
+        labs(title = paste("Box Plot of total consumption by",
+                           input$p1_criterion1,"and",input$p1_criterion2)) +
+        labs(fill = input$p1_criterion2)
       p
     }
   }
@@ -245,73 +254,75 @@ server <- function(input, output) {
   )
   })
   # variable desc side panel(total consumption panel)
-  output$var.desc <- renderPrint({
-    cat(input$firstgroup,end="\n")
-    cat(' ',unlist(codebook[codebook$name==input$firstgroup,2]),end="\n")
+  output$p1_var_desc <- renderPrint({
+    cat(input$p1_criterion1,end="\n")
+    cat(' ',unlist(CODEBOOK[CODEBOOK$name==input$p1_criterion1,2]),end="\n")
     cat(' ',end="\n")
-    cat(unlist(codebook[codebook$name==input$firstgroup,3]),end="\n")
+    cat(unlist(CODEBOOK[CODEBOOK$name==input$p1_criterion1,3]),end="\n")
     # if user choose second group
     if (isSecondgroupSet(input)){
       cat("===========",end="\n")
-      cat(input$secondgroup,end="\n")
-      cat(' ',unlist(codebook[codebook$name==input$secondgroup,2]),end="\n")
+      cat(input$p1_criterion2,end="\n")
+      cat(' ',unlist(CODEBOOK[CODEBOOK$name==input$p1_criterion2,2]),end="\n")
       cat(' ',end="\n")
-      cat(unlist(codebook[codebook$name==input$secondgroup,3]),end="\n")
+      cat(unlist(CODEBOOK[CODEBOOK$name==input$p1_criterion2,3]),end="\n")
     }
     
   })
   # boxplot panel(total consumption panel)
-  output$download_plot1 <- downloadHandler(
+  output$p1_download_boxplot <- downloadHandler(
     filename=function(){
-      filename <- paste0(Sys.Date(),"_",input$firstgroup)
+      filename <- paste0(Sys.Date(),"_",input$p1_criterion1)
       if (isSecondgroupSet(input)) {
-        filename <- paste0(filename,"_",input$secondgroup)
+        filename <- paste0(filename,"_",input$p1_criterion2)
       }
       filename <- paste0(filename,"_boxplot.jpeg")
       return(filename)
     },
     content=function(filename){
-      nr.levels <- nlevels(data[[input$firstgroup]] %>% as.factor)
+      nr.levels <- nlevels(DATA[[input$p1_criterion1]] %>% as.factor)
+      jpeg_width = nr.levels * 10
       if (isSecondgroupSet(input)){
-        nr.levels <- nr.levels * nlevels(data[[input$secondgroup]] %>% as.factor)
+        jpeg_width = jpeg_width * 1.5
       }
-      jpeg_width = nr.levels*10
+      
       ggsave(filename = filename,
              height = 15,
              width = jpeg_width,
              device = "jpeg",
-             units="cm"
+             units="cm",
+             limitsize = FALSE
              )
     }
   )
   # rendering plot
-  output$plot1 <- renderPlot({
-    renderPlot1(input)
+  output$p1_boxplot <- renderPlot({
+    render.p1.boxplot(input)
   })
   
   # summary tabnpanel(total consumption panel)
-  output$summary1 <- renderPrint({
-    cat("By",input$firstgroup,end="\n")
-    print(make.summary.df(data,input$firstgroup))
+  output$p1_summary <- renderPrint({
+    cat("By",input$p1_criterion1,end="\n")
+    print(make.summary.df(DATA,input$p1_criterion1))
     if (isSecondgroupSet(input)){
       # only when second group is selected
       cat(" ",end="\n")
-      cat("By",input$secondgroup,end="\n")
-      print(make.summary.df(data,input$secondgroup))
+      cat("By",input$p1_criterion2,end="\n")
+      print(make.summary.df(DATA,input$p1_criterion2))
     }
   })
   
   # anova test tab panel(total consumption panel)
-  output$aov1 <- renderPrint({
-    total.consumption=data[['KWH']]
+  output$p1_aov <- renderPrint({
+    total.consumption=DATA[['KWH']]
     if (!isSecondgroupSet(input)){
       # only when first group is selected
-      cat("oneway ANOVA test of",input$firstgroup,end="\n")
-      aov.result=aov(total.consumption~ as.factor(data[[input$firstgroup]]))
+      cat("oneway ANOVA test of",input$p1_criterion1,end="\n")
+      aov.result=aov(total.consumption~ as.factor(DATA[[input$p1_criterion1]]))
     } else {
       # when first and second group are selected
-      cat("twoway ANOVA test of",input$firstgroup,"and",input$secondgroup,end="\n")
-      aov.result=aov(total.consumption~ as.factor(data[[input$firstgroup]])+as.factor(data[[input$secondgroup]]))
+      cat("twoway ANOVA test of",input$p1_criterion1,"and",input$p1_criterion2,end="\n")
+      aov.result=aov(total.consumption~ as.factor(DATA[[input$p1_criterion1]])+as.factor(DATA[[input$p1_criterion2]]))
     }
     cat(" ",end="\n")
     print(aov.result)
@@ -321,39 +332,38 @@ server <- function(input, output) {
     # by the value of p-value, it print variable's influence
     p.value=summary.aov.result[[1]][["Pr(>F)"]]
     if (p.value[1]<0.05) 
-      cat('\n\n','==>',input$firstgroup,' is influential to total consumption\n')
+      cat('\n\n','==>',input$p1_criterion1,' is influential to total consumption\n')
     if (isTRUE(p.value[2]<0.05)) 
-      cat(' ==>',input$secondgroup,' is influential to total consumption\n')
+      cat(' ==>',input$p1_criterion2,' is influential to total consumption\n')
   })
   
   # variable description panel(consumption usage page)
   output$var.desc2 <- renderPrint({
-    desc <- unlist(codebook[codebook$name==input$firstgroup2,2])
-    coded <- unlist(codebook[codebook$name==input$firstgroup2,3])
-    cat(input$firstgroup2, end="\n")
+    desc <- unlist(CODEBOOK[CODEBOOK$name==input$p2_criterion,2])
+    coded <- unlist(CODEBOOK[CODEBOOK$name==input$p2_criterion,3])
+    cat(input$p2_criterion, end="\n")
     cat('  :',desc,end="\n")
     br()
     cat(coded,end="\n")
   })
   # rendering bar plot tabpanel
-  output$boxplot <- renderPlot({
-    f.group <- make.column.factor(input$firstgroup2)
+  output$p2_boxplot <- renderPlot({
+    f.group <- make.column.factor(input$p2_criterion)
     nr.levels <- nlevels(f.group)
     par(mfrow=c(13,2))
     for (col in 1:26){
       idx <- KWH_COL_IDX[col]
       desc <- USAGE_DESC[col]
-      boxplot(data[[idx]]~f.group,xlab=criterion,ylab=paste("KWH used by\n",desc),
-              main=paste("Mean KWH used by",desc,"\ngrouped by",criterion),
+      boxplot(data[[idx]]~f.group,xlab=input$p2_criterion,ylab=paste("KWH used by\n",desc),
+              main=paste("Mean KWH used by",desc,"\ngrouped by",input$p2_criterion),
               range=3)
-      
+
     }
   })
-  output$download_box2_split <- downloadHandler(
-    filename=paste0("consumption_usage_by",input$firstgroup2,".zip"),
+  output$p2_download_boxplot_split <- downloadHandler(
+    filename=paste0("consumption_usage_by",input$p2_criterion,".zip"),
     content=function(filename){
-      criterion <- input$firstgroup2
-      f.group <- as.factor(data[[criterion]])
+      f.group <- make.column.factor(input$p2_criterion)
       nr.levels <- nlevels(f.group)
       file_list = c()
       for (col in 1:26){
@@ -363,8 +373,8 @@ server <- function(input, output) {
         file_list = c(file_list, tmp_filename)
         tmp_filename <- get.temp.path(tmp_filename)
         jpeg(tmp_filename,height=400,width=400)
-        boxplot(data[[idx]]~f.group,xlab=criterion,ylab=paste("KWH used by\n",desc),
-                main=paste("Mean KWH used by",desc,"grouped by",criterion),
+        boxplot(DATA[[idx]]~f.group,xlab=input$p2_criterion,ylab=paste("KWH used by\n",desc),
+                main=paste("Mean KWH used by",desc,"grouped by",input$p2_criterion),
                 range=3)
         dev.off()
       }
@@ -375,11 +385,11 @@ server <- function(input, output) {
     },
     contentType = "application/zip"
   )
-  output$download_box2_combined <- downloadHandler(
-    filename = paste0("consumption_usage_by",input$firstgroup2,"(combined).jpeg"),
+  output$p2_download_boxplot_combined <- downloadHandler(
+    filename = paste0("consumption_usage_by",input$p2_criterion,"(combined).jpeg"),
     content=function(filename){
-      criterion <- input$firstgroup2
-      f.group <- as.factor(data[[criterion]])
+      criterion <- input$p2_criterion
+      f.group <- as.factor(DATA[[criterion]])
       nr.levels <- nlevels(f.group)
       jpeg(filename = filename, height=13*300, width = 2*300)
       par(mfrow=c(13,2))
@@ -387,7 +397,7 @@ server <- function(input, output) {
         idx <- KWH_COL_IDX[col]
         desc <- USAGE_DESC[col]
         tmp_filename <- paste("Mean KWH used by",desc,"\ngrouped by",criterion,sep="_",end=".jpeg")
-        boxplot(data[[idx]]~f.group,xlab=criterion,ylab=paste("KWH used by\n",desc),
+        boxplot(DATA[[idx]]~f.group,xlab=criterion,ylab=paste("KWH used by\n",desc),
                 main=paste("Mean KWH used by",desc,"\ngrouped by",criterion),
                 range=3)
         
@@ -395,13 +405,13 @@ server <- function(input, output) {
       dev.off()
     }
   )
-  output$barchart <- renderPlot({
-    criterion <- input$firstgroup2
-    f.group <- as.factor(data[[criterion]])
+  output$p2_barplot <- renderPlot({
+    criterion <- input$p2_criterion
+    f.group <- as.factor(DATA[[criterion]])
     nr.levels <- nlevels(f.group)
     par(mfrow=c(floor(nr.levels/2)+1,2),
       oma=c(4,4,4,10),mar=c(7,10,1,1))
-    tmp <- data %>% select(criterion,KWH_COL_IDX) %>% group_by_(criterion) %>% 
+    tmp <- DATA %>% select(criterion,KWH_COL_IDX) %>% group_by_(criterion) %>% 
       summarise_all(funs(mean),rm.na=TRUE) 
     name=rownames(tmp)
     tmp <- tmp %>% slice(1:n()) %>% as.matrix
@@ -417,22 +427,22 @@ server <- function(input, output) {
     }
   })
   get.codebook.str <- function(input) {
-    desc <- unlist(codebook[codebook$name==input$firstgroup2,2])
-    coded <- unlist(codebook[codebook$name==input$firstgroup2,3])
+    desc <- unlist(CODEBOOK[CODEBOOK$name==input$p2_criterion,2])
+    coded <- unlist(CODEBOOK[CODEBOOK$name==input$p2_criterion,3])
     text_out=""
-    text_out <- paste(input$firstgroup2, end = "\n")
+    text_out <- paste(input$p2_criterion, end = "\n")
     text_out <- paste(text_out, '  :', desc, end = "\n\n")
     text_out <- paste(text_out, coded, end="\n")
     return(text_out)
   }
-  output$download_bar2_split <- downloadHandler(
-    filename=paste0("consumption_usage_by",input$firstgroup2,".zip"),
+  output$p2_download_barplot_split <- downloadHandler(
+    filename=paste0("consumption_usage_by",input$p2_criterion,".zip"),
     content=function(filename){
       # create plots
-      criterion <- input$firstgroup2
-      f.group <- as.factor(data[[criterion]])
+      criterion <- input$p2_criterion
+      f.group <- as.factor(DATA[[criterion]])
       nr.levels <- nlevels(f.group)
-      tmp <- data %>% select(criterion,KWH_COL_IDX) %>% group_by_(criterion) %>% 
+      tmp <- DATA %>% select(criterion,KWH_COL_IDX) %>% group_by_(criterion) %>% 
         summarise_all(funs(mean),rm.na=TRUE) 
       name=rownames(tmp)
       tmp <- tmp %>% slice(1:n()) %>% as.matrix
@@ -464,17 +474,17 @@ server <- function(input, output) {
     },
     contentType = "application/zip"
   )
-  output$download_bar2_combined <- downloadHandler(
-    filename = paste0("consumption_usage_by",input$firstgroup2,"(combined).jpeg"),
+  output$p2_download_barplot_combined <- downloadHandler(
+    filename = paste0("consumption_usage_by",input$p2_criterion,"(combined).jpeg"),
     content=function(filename){
-      criterion <- input$firstgroup2
-      f.group <- as.factor(data[[criterion]])
+      criterion <- input$p2_criterion
+      f.group <- as.factor(DATA[[criterion]])
       nr.levels <- nlevels(f.group)
       # open device
       jpeg(filename = filename, height = 700, width = 250*(nr.levels))
       par(mfrow=c(1,nr.levels), mar=c(3,5,1,1), oma = c(10,10,3,3))
       
-      tmp <- data %>% select(criterion,KWH_COL_IDX) %>% group_by_(criterion) %>% 
+      tmp <- DATA %>% select(criterion,KWH_COL_IDX) %>% group_by_(criterion) %>% 
         summarise_all(funs(mean),rm.na=TRUE) 
       name=rownames(tmp)
       tmp <- tmp %>% slice(1:n()) %>% as.matrix
@@ -507,10 +517,10 @@ server <- function(input, output) {
   
   # rendering summary table for 2nd navpane
   get.average.table.consumption.usage <- function(input) {
-    criterion <- input$firstgroup2
-    f.group <- as.factor(data[[criterion]])
+    criterion <- input$p2_criterion
+    f.group <- as.factor(DATA[[criterion]])
     nr.levels <- nlevels(f.group)
-    tmp <- data %>% select(criterion, KWH_COL_IDX) %>% group_by_(criterion) %>% 
+    tmp <- DATA %>% select(criterion, KWH_COL_IDX) %>% group_by_(criterion) %>% 
       summarise_all(funs(mean),rm.na=TRUE) 
     name=rownames(tmp)
     tmp <- tmp %>% slice(1:n()) %>% as.matrix %>% t
@@ -519,19 +529,19 @@ server <- function(input, output) {
     rownames(tmp) <- USAGE_DESC
     return(tmp)
   }
-  output$summary_table_header_avg <- renderUI({
+  output$p2_summary_header_avg <- renderUI({
     div(
-      h3( paste0("Summary Table By ",input$firstgroup2) ),
+      h3( paste0("Summary Table By ",input$p2_criterion) ),
       p(paste0("Yearly Average Consumption Usage by ",
-               input$firstgroup2,".")) 
+               input$p2_criterion,".")) 
     )
   })
-  output$summarytable_avg <- renderTable({
+  output$p2_summary_avg <- renderTable({
     return(get.average.table.consumption.usage(input))
   }, rownames=TRUE)
   
-  output$download_summary2_avg <- downloadHandler(
-    filename = paste0("mean_consumption_usage_by_",input$firstgroup2,".csv"),
+  output$p2_download_summary_avg <- downloadHandler(
+    filename = paste0("mean_consumption_usage_by_",input$p2_criterion,".csv"),
     content = function(filename){
       csv_out <- get.average.table.consumption.usage(input)
       write.csv(x=csv_out, file=filename, row.names = TRUE)
@@ -548,19 +558,19 @@ server <- function(input, output) {
     return(tmp)
   }
   
-  output$summary_table_header_percentage <- renderUI({
+  output$p2_summary_header_percentage <- renderUI({
     div(
-      h3( paste0("Summary Table(Percentage) By ",input$firstgroup2) ),
+      h3( paste0("Summary Table(Percentage) By ",input$p2_criterion) ),
       p(paste0("Yearly Consumption Usage Percentage by ",
-               input$firstgroup2,".")) 
+               input$p2_criterion,".")) 
     )
   })
-  output$summarytable_percentage <- renderTable({
+  output$p2_summary_percentage <- renderTable({
     return(get.percentage.table.consumption.usage(input))
   }, rownames=TRUE)
   
-  output$download_summary2_percentage <- downloadHandler(
-    filename = paste0("percentage_consumption_usage_by_",input$firstgroup2,".csv"),
+  output$p2_download_summary_percentage <- downloadHandler(
+    filename = paste0("percentage_consumption_usage_by_",input$p2_criterion,".csv"),
     content = function(filename){
       csv_out <- get.percentage.table.consumption.usage(input)
       write.csv(x=csv_out, file=filename, row.names = TRUE)
@@ -569,7 +579,7 @@ server <- function(input, output) {
   
   ## panel 3
   output$codebook.df <- renderDataTable(
-    datatable(codebook, 
+    datatable(CODEBOOK, 
               options = list(
                 paging = TRUE,
                 pageLength = 20
