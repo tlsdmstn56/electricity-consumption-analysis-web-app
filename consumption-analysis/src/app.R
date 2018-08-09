@@ -209,6 +209,7 @@ is.continuous <- function(group) {
   return(rs)
 }
 
+p1_boxplot = NULL
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -217,21 +218,21 @@ server <- function(input, output) {
     kwh <- DATA[['KWH']]
     if (!isSecondgroupSet(input)){
       # only when first group is selected
-      p <- ggplot(mapping=aes(y=kwh, x=vector_c1)) + 
+      p1_boxplot <- ggplot(mapping=aes(y=kwh, x=vector_c1)) + 
         geom_boxplot() + xlab(input$p1_criterion1) +
         labs(title=paste("Box Plot of total consumption by",input$p1_criterion1))
-      p
+      p1_boxplot
     } else{
       # when first and second group was selected
       vector_c2 <- make.column.factor(input$p1_criterion2)
-      p <- ggplot(mapping = aes(y = kwh, 
-                                x = firstgroup, 
+      p1_boxplot <- ggplot(mapping = aes(y = kwh, 
+                                x = vector_c1, 
                                 fill = vector_c2)) + 
         geom_boxplot() + xlab(input$p1_criterion1) + 
         labs(title = paste("Box Plot of total consumption by",
                            input$p1_criterion1,"and",input$p1_criterion2)) +
         labs(fill = input$p1_criterion2)
-      p
+      p1_boxplot
     }
   }
   # for guide(frequent used variables, data source, some infos) on the top 
@@ -286,7 +287,8 @@ server <- function(input, output) {
         jpeg_width = jpeg_width * 1.5
       }
       
-      ggsave(filename = filename,
+      ggsave(plot = p1_boxplot,
+             filename = filename,
              height = 15,
              width = jpeg_width,
              device = "jpeg",
