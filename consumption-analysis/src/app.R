@@ -1,18 +1,15 @@
-load.package <- function(package){
-  if(!require(package,character.only = TRUE )){
-    install.packages(package)
-    library(package,character.only = TRUE)
-  } 
-}
-
 # ibrary import
-load.package("shiny")
-load.package("DT")
-load.package("readr")
-load.package("dplyr")
-load.package("jsonlite")
-load.package("ggplot2")
-#library(plotly)
+library(shiny)
+library(DT)
+library(readr)
+library(dplyr)
+library(jsonlite)
+library(ggplot2)
+library(plotly)
+library(shinycssloaders)
+library(gridExtra)
+library(tidyr)
+library(tibble)
 
 # Data Import
 DATA <- read_csv("../data/recs2015_clean.csv", locale=locale(tz="US/Pacific"))
@@ -34,183 +31,19 @@ COLNAMES_IN_DROPDOWN <- names(DATA)
 DROPDOWN_MENU <- sort(COLNAMES_IN_DROPDOWN[1:242])
 TEMP_DIR <- tempdir()
 
-options(device = function() pdf(file = paste0(TEMP_DIR, "Rplots.pdf")))
+# options(device = function() pdf(file = paste0(TEMP_DIR, "Rplots.pdf")))
 
-# Define UI for application
-#
-# titlePanel
-# textOutPut(description pages)
-# navibar
-#   tabPanel(Total Consumption)
-#     [sidebarLayout]
-#      sidebarPanel(two input dropdowns)
-#      mainPanel
-#       [tabsetPanel]
-#        tabPanel(Plot)
-#        tabPanel(Summary Table)
-#        tabPanel(Anova Test)
-#   tabPanel(Consumption Usage)
-#     [sidebarLayout]
-#      sidebarPanel(one input dropdowns)
-#      mainPanel
-#       [tabsetPanel]
-#        tabPanel(Box Plot)
-#        tabPanel(Bar Chart)
-#        tabPanel(Summary Table)
-#   tabPanel(Codebook)
-ui <- fluidPage(
-  # title
-  titlePanel("Consumption Analysis", windowTitle="Consumption Analysis"),
-  # guide(frequent used variables, data source, some infos)
-  htmlOutput('guide'),
-  # Navigation Bar on the top
-  navbarPage("Menu",
-             # Total Consumption Tab
-             tabPanel("Total Consumption",
-                      sidebarLayout(
-                        sidebarPanel(
-                          # first group
-                          selectInput("p1_criterion1", 
-                                      "First Criterion",
-                                      DROPDOWN_MENU),
-                          # second group
-                          selectInput("p1_criterion2", 
-                                      "Second Criterion",
-                                      c("None",DROPDOWN_MENU)),
-                          # group description
-                          htmlOutput("p1_var_desc")),
-                        # plots and summary, anova
-                        mainPanel(
-                          tabsetPanel(
-                            tabPanel("Plot", 
-                                     br(),
-                                     tags$p("Press Download Button for bigger image"),
-                                     downloadButton("p1_download_boxplot", "Download"), 
-                                     br(),
-                                     plotOutput("p1_boxplot")),
-                            tabPanel("Summary",
-                                     verbatimTextOutput("p1_summary")),
-                            tabPanel("Anova Test", 
-                                     verbatimTextOutput("p1_aov"))
-                          )) # end of main panel
-                      )),
-             # Consumption Usage tab
-             tabPanel("Consumption Usage",
-                      sidebarLayout(
-                        # for group selection
-                        sidebarPanel(
-                          selectInput("p2_criterion", "Criterion",
-                                      sort(COLNAMES_IN_DROPDOWN[1:242])),
-                          htmlOutput("p2_var_desc")),
-                        mainPanel(
-                          tabsetPanel(
-                            tabPanel("Box Plot",
-                                     br(),
-                                     tags$p("Press Download Button for bigger image"),
-                                     tags$div(
-                                       downloadButton("p2_download_boxplot_split", 
-                                                      "Download(file by plots, .zip)"), 
-                                       downloadButton("p2_download_boxplot_combined", 
-                                                      "Download(combined to one file, .jpeg)")
-                                     ),
-                                     br(),
-                                     plotOutput("p2_boxplot", height=4000, width=1000)),
-                            tabPanel("Bar Chart",
-                                     br(),
-                                     tags$p("Press Download Button for bigger image"),
-                                     tags$div(
-                                       downloadButton("p2_download_barplot_split", 
-                                                      "Download(file by plots, .zip)"), 
-                                       downloadButton("p2_download_barplot_combined", 
-                                                      "Download(combined to one file, .jpeg)")
-                                     ),
-                                     br(),
-                                     plotOutput("p2_barplot", height=3000, width=1000)),
-                            tabPanel("Summary Table", 
-                                     htmlOutput("p2_summary_header_avg"),
-                                     br(),
-                                     tags$div(
-                                       downloadButton("p2_download_summary_avg", 
-                                                      "Download(average, .csv)")
-                                     ),
-                                     br(),
-                                     tableOutput("p2_summary_avg"),
-                                     
-                                     br(),
-                                     htmlOutput("p2_summary_header_percentage"),
-                                     br(),
-                                     tags$div(
-                                       downloadButton("p2_download_summary_percentage",
-                                                      "Download(percentage, csv)")
-                                     ),
-                                     br(),
-                                     tableOutput("p2_summary_percentage")
-                            )),style="overflow-y:scroll") # end of main panel
-                      )),
-             # code book for variable description
-             tabPanel("Codebook", dataTableOutput('codebook.df'))
-  )
-)
 
-# utility functions
-make.summary.df <- function(name){
-  # make summary data frame by 'name'
-  # 
-  # Args:
-  #   data: data.frame to be used for making summary data frame
-  #   name: name of group to split the summary table
-  #
-  # Returns:
-  #   data.frame of summary table by name
-  tapp <- tapply(DATA[['KWH']], as.factor(DATA[[name]]), summary)
-  tapp=do.call(rbind,tapp)
-  return(tapp)
-}
 
-get.temp.path <- function(filename){
-  return(paste0(TEMP_DIR,"/",filename))
-}
+source("utils.R", local = TRUE)
+source("ui.R", local = TRUE)
 
-isSecondgroupSet <- function(input) {
-  # check p1_criterion2 is set
-  #
-  # Args:
-  #   input: server function's input
-  #
-  # Returns:
-  #   logical value: true when p1_criterion2 is set, otherwise false
-  return("None"!=input$p1_criterion2 & input$p1_criterion1!=input$p1_criterion2)
-}
-
-make.column.factor <- function(group) {
-  # get factorized vector whose labels and levels are properly set
-  #
-  # Args:
-  #   group: name of group(column) to be factorized
-  #
-  # Returns:
-  #   vector(factor): factor vector with properly labeld
-  factor.coded <- names(CODEBOOK_JSON[[group]]$coded)
-  factor.label <- unlist(CODEBOOK_JSON[[group]]$coded[factor.coded])
-  factored <- factor(DATA[[group]],
-                     levels = factor.coded,
-                     labels = factor.label)
-  return(factored)
-}
-
-is.continuous <- function(group) {
-  # check given group is continuous
-  #
-  # Args:
-  #   group: name of group(column) to have 
-  #          checked if it is continuous
-  #
-  # Returns:
-  #   logical: true if given group is contiuous
-  rs <- (CODEBOOK %>% filter(name==group) %>% select(4) %>% as.logical)
-  return(rs)
-}
 p1_boxplot <- NULL
+p2_boxplot_one <- NULL
+p2_boxplot_each <- NULL
+p2_barplot_one <- NULL
+p2_barplot_each <- NULL
+KWH <- DATA[['KWH']]
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
   # simple caching
@@ -222,40 +55,23 @@ server <- function(input, output, session) {
     if (!isSecondgroupSet(input)){
       # only when first group is selected
       p1_boxplot <<- ggplot(mapping=aes(y=kwh, x=vector_c1)) + 
-        geom_boxplot() + xlab(input$p1_criterion1) +
+        geom_boxplot() + xlab(input$p1_criterion1) + ylab("kwh(1 year)") +
         labs(title=paste("Box Plot of total consumption by",input$p1_criterion1))
-      p1_boxplot
+      return(ggplotly(p1_boxplot))
     } else{
       # when first and second group was selected
       vector_c2 <- make.column.factor(input$p1_criterion2)
       p1_boxplot <<- ggplot(mapping = aes(y = kwh, 
                                 x = vector_c1, 
                                 fill = vector_c2)) + 
-        geom_boxplot() + xlab(input$p1_criterion1) + 
+        geom_boxplot() + xlab(input$p1_criterion1) + ylab("kwh(1 year)") +
         labs(title = paste("Box Plot of total consumption by",
                            input$p1_criterion1,"and",input$p1_criterion2)) +
         labs(fill = input$p1_criterion2)
-      p1_boxplot
+      return(ggplotly(p1_boxplot) %>% layout(boxmode = "group"))
     }
   }
-  # for guide(frequent used variables, data source, some infos) on the top 
-  output$guide<-renderUI({
-    tagList(
-      p("Data Source: ",
-        a(href="https://www.eia.gov/consumption/residential/data/2015/", 
-          "RECS2015(Residential Electricity Consumption Survey 2015)")),
-      tags$ul(
-        tags$li("MONEYPY: income"),
-        tags$li("CLIMATE_REGION_PUB: climate(cold, very cold, hot dry,...)"),
-        tags$li("TYPEHUQ: Type of housing unit(mobile, single-family, apartment..)"),
-        tags$li("UATYP10: Census 2010 Urban Type(Urban, Rural)"),
-        tags$li("DIVISION: Census Division(New Englance, Pacific..)"),
-        tags$li("HHSEX: Respondent gender"),
-        tags$li("HHAGE: Respondent age"),
-        tags$li("EMPLOYHH: Respondent employment status(fulltime, part time..)")
-    )
-  )
-  })
+
   # variable desc side panel(total consumption panel)
   output$p1_var_desc <- renderUI({
     rs <- tagList(
@@ -295,18 +111,22 @@ server <- function(input, output, session) {
         jpeg_width = jpeg_width * 1.5
       }
 
-      ggsave(filename = filename,
-             plot = p1_boxplot,
-             device = "jpeg",
-             height = 15,
-             width = jpeg_width,
-             units = "cm")
+      # ggsave(filename = filename,
+      #        plot = p1_boxplot,
+      #        device = "jpeg",
+      #        height = 15,
+      #        width = jpeg_width,
+      #        units = "cm")
+      orca(p = ggplotly(p1_boxplot),
+           file = filename,
+           width = jpeg_width,
+           height = 15)
     },
     contentType = "image/jpeg"
   )
   # rendering plot
-  output$p1_boxplot <- renderPlot({
-    render.p1.boxplot(input)
+  output$p1_boxplot <- renderPlotly({
+    ggplotly(render.p1.boxplot(input))
   })
   
   # summary tabnpanel(total consumption panel)
@@ -359,18 +179,21 @@ server <- function(input, output, session) {
   })
   # rendering bar plot tabpanel
   output$p2_boxplot <- renderPlot({
-    f.group <- make.column.factor(input$p2_criterion)
-    nr.levels <- nlevels(f.group)
-    par(mfrow=c(13,2))
-    for (col in 1:26){
+    factored <- make.column.factor(input$p2_criterion)
+    boxplot_list <- list()
+    for (col in 1:26) {
       idx <- KWH_COL_IDX[col]
       desc <- USAGE_DESC[col]
-      boxplot(DATA[[idx]]~f.group,
-              xlab=input$p2_criterion,
-              ylab=paste("KWH used by\n",desc),
-              main=paste("Mean KWH used by",desc,"\ngrouped by",input$p2_criterion),
-              range=3)
+      boxplot_list[[col]] <- ggplot(mapping=aes(y=DATA[[idx]], x=factored)) +
+        geom_boxplot() +
+        xlab(input$p2_criterion) +
+        ylab(paste("KWH used by",desc)) +
+        labs(title=paste("Mean KWH used by",desc,"grouped by",input$p2_criterion)) +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
     }
+    p2_boxplot_each <<- boxplot_list
+    p2_boxplot_one <<- do.call("grid.arrange", c(boxplot_list, ncol=2))
+    return(p2_boxplot_one)
   })
   output$p2_download_boxplot_split <- downloadHandler(
     filename=paste0("consumption_usage_by",input$p2_criterion,".zip"),
@@ -417,26 +240,23 @@ server <- function(input, output, session) {
       dev.off()
     }
   )
-  output$p2_barplot <- renderPlot({
-    criterion <- input$p2_criterion
-    f.group <- as.factor(DATA[[criterion]])
-    nr.levels <- nlevels(f.group)
-    par(mfrow=c(floor(nr.levels/2)+1,2),
-      oma=c(4,4,4,10),mar=c(7,10,1,1))
-    tmp <- DATA %>% select(criterion,KWH_COL_IDX) %>% group_by_(criterion) %>% 
-      summarise_all(funs(mean),rm.na=TRUE) 
-    name=rownames(tmp)
-    tmp <- tmp %>% slice(1:n()) %>% as.matrix
-    xmax = max(tmp[,2:27])
-    for (col in 1:nr.levels){
-      barplot(tmp[col,2:27]+0.05,
-              horiz=TRUE, 
-              names.arg=USAGE_DESC,
-              main=name[col],
-              las=1,
-              xlim=c(0,xmax+100),
-              xlab="KWH(year)")
-    }
+  output$p2_barplot <- renderPlotly({
+    factored <- make.column.factor(input$p2_criterion)
+    nr.levels <- nlevels(factored)
+    barplot_list <- list()
+    tmp <- DATA %>% select(KWH_COL_IDX) %>% mutate(criterion=factored) %>% 
+         group_by(criterion) %>% 
+         summarise_all(funs(mean),rm.na=TRUE)
+    colnames(tmp)[-1] <- USAGE_DESC
+    tmp.long <- gather(tmp, usage, avg_kwh, -criterion)
+    barplot_list[[1]] <- ggplot(tmp.long, mapping = aes(x=usage, y=avg_kwh, fill=criterion)) +
+      geom_bar(stat="identity", position=position_dodge()) + 
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      labs(title = paste("Bar Plot of consumption usage by",
+                         input$p2_criterion)) +
+      labs(fill = input$p2_criterion) + 
+      xlab("Yearly Average KWH")
+    return(ggplotly(barplot_list[[1]]))
   })
   get.codebook.str <- function(input) {
     desc <- unlist(CODEBOOK[CODEBOOK$name==input$p2_criterion,2])
