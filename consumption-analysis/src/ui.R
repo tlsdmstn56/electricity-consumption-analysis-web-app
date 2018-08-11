@@ -54,8 +54,7 @@ ui <- fluidPage(
                                       "Second Criterion",
                                       c("None",DROPDOWN_MENU)),
                           # group description
-                          htmlOutput("p1_var_desc"),
-                          width=2 ),
+                          htmlOutput("p1_var_desc")),
                         # plots and summary, anova
                         mainPanel(
                           tabsetPanel(
@@ -79,8 +78,7 @@ ui <- fluidPage(
                         sidebarPanel(
                           selectInput("p2_criterion", "Criterion",
                                       sort(COLNAMES_IN_DROPDOWN[1:242])),
-                          htmlOutput("p2_var_desc"),
-                          width=2 ),
+                          htmlOutput("p2_var_desc")),
                         mainPanel(
                           tabsetPanel(
                             tabPanel("Box Plot",

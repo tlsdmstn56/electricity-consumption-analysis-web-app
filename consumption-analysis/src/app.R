@@ -10,6 +10,8 @@ library(shinycssloaders)
 library(gridExtra)
 library(tidyr)
 library(tibble)
+library(processx)
+
 
 # Data Import
 DATA <- read_csv("../data/recs2015_clean.csv", locale=locale(tz="US/Pacific"))
@@ -96,7 +98,7 @@ server <- function(input, output, session) {
   # boxplot panel(total consumption panel)
   output$p1_download_boxplot <- downloadHandler(
     filename=function(){
-      filename <- paste0(Sys.Date(),"_",input$p1_criterion1)
+      filename <- paste0(input$p1_criterion1)
       if (isSecondgroupSet(input)) {
         filename <- paste0(filename,"_",input$p1_criterion2)
       }
@@ -111,16 +113,12 @@ server <- function(input, output, session) {
         jpeg_width = jpeg_width * 1.5
       }
 
-      # ggsave(filename = filename,
-      #        plot = p1_boxplot,
-      #        device = "jpeg",
-      #        height = 15,
-      #        width = jpeg_width,
-      #        units = "cm")
-      orca(p = ggplotly(p1_boxplot),
-           file = filename,
-           width = jpeg_width,
-           height = 15)
+      ggsave(filename = filename,
+              plot = p1_boxplot,
+              device = "jpeg",
+              height = 15,
+              width = jpeg_width,
+              units = "cm")
     },
     contentType = "image/jpeg"
   )
@@ -151,7 +149,8 @@ server <- function(input, output, session) {
     } else {
       # when first and second group are selected
       cat("twoway ANOVA test of",input$p1_criterion1,"and",input$p1_criterion2,end="\n")
-      aov.result=aov(total.consumption~ as.factor(DATA[[input$p1_criterion1]])+as.factor(DATA[[input$p1_criterion2]]))
+      aov.result=aov(total.consumption~ as.factor(DATA[[input$p1_criterion1]])
+                     +as.factor(DATA[[input$p1_criterion2]]))
     }
     cat(" ",end="\n")
     print(aov.result)
@@ -198,20 +197,27 @@ server <- function(input, output, session) {
   output$p2_download_boxplot_split <- downloadHandler(
     filename=paste0("consumption_usage_by",input$p2_criterion,".zip"),
     content=function(filename){
-      f.group <- make.column.factor(input$p2_criterion)
-      nr.levels <- nlevels(f.group)
+      # f.group <- make.column.factor(input$p2_criterion)
+      # nr.levels <- nlevels(f.group)
       file_list = c()
       for (col in 1:26){
-        idx <- KWH_COL_IDX[col]
+        # idx <- KWH_COL_IDX[col]
         desc <- USAGE_DESC[col]
         tmp_filename <- paste("average_KWH_used_by",desc,sep="",end=".jpeg")
         file_list = c(file_list, tmp_filename)
         tmp_filename <- get.temp.path(tmp_filename)
-        jpeg(tmp_filename,height=700,width=700)
-        boxplot(DATA[[idx]]~f.group,xlab=input$p2_criterion,ylab=paste("KWH used by\n",desc),
-                main=paste("Mean KWH used by",desc,"grouped by",input$p2_criterion),
-                range=3)
-        dev.off()
+        # jpeg(tmp_filename,height=700,width=700)
+        # boxplot(DATA[[idx]]~f.group,xlab=input$p2_criterion,ylab=paste("KWH used by\n",desc),
+        #         main=paste("Mean KWH used by",desc,"grouped by",input$p2_criterion),
+        #         range=3)
+        # dev.off()
+        profvis::profvis({ggsave(filename = tmp_filename,
+               plot = p2_boxplot_each[[col]],
+               scale = 1.6,
+               device = "jpeg",
+               height = 6,
+               width = 6,
+               units = "cm")})
       }
       wd.backup <- getwd()
       setwd(TEMP_DIR)
@@ -231,7 +237,8 @@ server <- function(input, output, session) {
       for (col in 1:26){
         idx <- KWH_COL_IDX[col]
         desc <- USAGE_DESC[col]
-        tmp_filename <- paste("Mean KWH used by",desc,"\ngrouped by",criterion,sep="_",end=".jpeg")
+        tmp_filename <- paste("Mean KWH used by",desc,"\ngrouped by",
+                              criterion,sep="_",end=".jpeg")
         boxplot(DATA[[idx]]~f.group,xlab=criterion,ylab=paste("KWH used by\n",desc),
                 main=paste("Mean KWH used by",desc,"\ngrouped by",criterion),
                 range=3)
