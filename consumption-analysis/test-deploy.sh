@@ -1,6 +1,6 @@
 #!/bin/bash
-SRC_DIR=/srv/shiny-server/test-consumption-elec/
-DATA_DIR=/srv/shiny-server/data/
+SRC_DIR=/home/eunsoo_sheen/stage/consumption-elec
+DATA_DIR=$SRC_DIR/../data/
 
 sudo rm -rf $SRC_DIR
 

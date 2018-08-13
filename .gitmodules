@@ -1,0 +1,3 @@
+[submodule "external/shiny-docker"]
+	path = external/shiny-docker
+	url = https://github.com/rocker-org/shiny.git

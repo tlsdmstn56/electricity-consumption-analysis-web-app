@@ -1,6 +1,6 @@
 #!/bin/bash
-SRC_DIR=/srv/shiny-server/consumption-elec/
-DATA_DIR=/srv/shiny-server/data/
+SRC_DIR=/home/eunsoo_sheen/production/consumption-elec/
+DATA_DIR=$SRC_DIR/../data/
 
 if [ ! -d $SRC_DIR ]; then
     sudo mkdir $SRC_DIR
