@@ -33,4 +33,3 @@ for (name in names(out_list)){
 
 jsoned <- toJSON(out_list)
 write(x=jsoned,file = "../data/codebook_final.json")
-

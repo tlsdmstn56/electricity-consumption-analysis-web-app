@@ -1,0 +1,16 @@
+#!/bin/bash
+# staging server configuration
+STAGE_DIR=#/home/$(whoami)/stage
+STAGE_DOCKER_NAME=#shiny-staging
+STAGE_DOCKER_PORT=#3737
+
+# production server configuration
+PRODUCTION_DIR=#/home/$(whoami)/production
+PRODUCTION_DOCKER_NAME=#shiny-production
+PRODUCTION_DOCKER_PORT=#3838
+
+# rstudio server configuration
+RSTUDIO_DIR=#/home/$(whoami)
+RSTUDIO_DOCKER_NAME=#rstudio-docker
+RSTUDIO_USER=#shiny-admin
+RSTUDIO_PASSWORD=#password
