@@ -5,3 +5,4 @@ consumption-analysis/src/*.txt
 .Rhistory
 .RData
 .Rproj.user
+config.conf

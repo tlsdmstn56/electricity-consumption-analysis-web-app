@@ -40,7 +40,7 @@ ui <- fluidPage(
     )
   ),
   # Navigation Bar on the top
-  navbarPage("Menu",
+  navbarPage(title = "Menu",
              # Total Consumption Tab
              tabPanel("Total Consumption",
                       sidebarLayout(
@@ -68,9 +68,11 @@ ui <- fluidPage(
                             tabPanel("Summary",
                                      verbatimTextOutput("p1_summary")),
                             tabPanel("Anova Test", 
-                                     verbatimTextOutput("p1_aov"))
+                                     verbatimTextOutput("p1_aov")),
+                            id = "p1_tabs"
                           )) # end of main panel
-                      )),
+                      ),
+                      value="p1"),
              # Consumption Usage tab
              tabPanel("Consumption Usage",
                       sidebarLayout(
@@ -78,7 +80,8 @@ ui <- fluidPage(
                         sidebarPanel(
                           selectInput("p2_criterion", "Criterion",
                                       sort(COLNAMES_IN_DROPDOWN[1:242])),
-                          htmlOutput("p2_var_desc")),
+                          htmlOutput("p2_var_desc"),
+                          htmlOutput("p2_legend")),
                         mainPanel(
                           tabsetPanel(
                             tabPanel("Box Plot",
@@ -91,7 +94,9 @@ ui <- fluidPage(
                                                       "Download(combined to one file, .jpeg)")
                                      ),
                                      br(),
-                                     plotOutput("p2_boxplot", height=4000, width=1000) %>% withSpinner
+                                     plotlyOutput("p2_boxplot") %>% withSpinner,
+                                     value = "box"
+                                     
                             ) ,
                             
                             tabPanel("Bar Chart",
@@ -107,7 +112,8 @@ ui <- fluidPage(
                                      plotlyOutput("p2_barplot"
                                                   #, width=1500, height=700
                                                   ) %>% 
-                                       withSpinner),
+                                       withSpinner,
+                                     value = "bar"),
                             tabPanel("Summary Table", 
                                      htmlOutput("p2_summary_header_avg"),
                                      br(),
@@ -126,10 +132,21 @@ ui <- fluidPage(
                                                       "Download(percentage, csv)")
                                      ),
                                      br(),
-                                     tableOutput("p2_summary_percentage")
-                            )),style="overflow-y:scroll") # end of main panel
-                      )),
+                                     tableOutput("p2_summary_percentage"),
+                                     value = "summary"
+                                    ),
+                            id="p2_tabs"
+                            ) # end of p2 tabsetpanel
+                          ,style="overflow-y:scroll") # end of main panel
+                      ),
+                      value="p2"),
              # code book for variable description
-             tabPanel("Codebook", dataTableOutput('codebook.df'))
+             tabPanel("Codebook", dataTableOutput('p3_codebook'),
+                      value="p3"),
+             id = 'main_nav'
+  ),
+  tags$footer(
+    hr(),
+    p("eunsoo.sheen@encoredtech.com for any feedback")
   )
 )
