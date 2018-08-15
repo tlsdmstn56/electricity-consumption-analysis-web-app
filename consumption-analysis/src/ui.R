@@ -37,7 +37,8 @@ ui <- fluidPage(
       tags$li("HHSEX: Respondent gender"),
       tags$li("HHAGE: Respondent age"),
       tags$li("EMPLOYHH: Respondent employment status(fulltime, part time..)")
-    )
+    ),
+    p("eunsoo.sheen@encoredtech.com for any feedback")
   ),
   # Navigation Bar on the top
   navbarPage(title = "Menu",
@@ -143,10 +144,5 @@ ui <- fluidPage(
              # code book for variable description
              tabPanel("Codebook", dataTableOutput('p3_codebook'),
                       value="p3"),
-             id = 'main_nav'
-  ),
-  tags$footer(
-    hr(),
-    p("eunsoo.sheen@encoredtech.com for any feedback")
-  )
+             id = 'main_nav')
 )
