@@ -1,17 +1,3 @@
-# v1 final stable
-#
-# # p1
-#
-# # p2
-# * box plot
-# - x축 레이블 반복되도록
-# repeat.tick.labels = 'left'(theme)
-#
-# * bar plot
-# - bar plot 기울기 조금 더 가파르게(web, split 둘다)
-# -
-#   - split 압축 파일 이름
-
 # library import
 library(shiny)
 library(DT)
@@ -102,10 +88,21 @@ server <- function(input, output, session) {
     kwh <- DATA[['KWH']]
     if (!isSecondgroupSet(input)) {
       # only when first group is selected
-      p1_boxplot <<- ggplot(mapping = aes(y = kwh, x = vector_c1)) +
-        geom_boxplot() + xlab(input$p1_criterion1) + ylab("kwh(1 year)") +
-        labs(title = paste("Box Plot of total consumption by", input$p1_criterion1))
-      return(ggplotly(p1_boxplot) %>% layout(dragmode = "pan"))
+      # p1_boxplot <<- ggplot(mapping = aes(y = kwh, x = vector_c1)) +
+      #   geom_boxplot() + xlab(input$p1_criterion1) + ylab("kwh(1 year)") +
+      #   labs(title = paste("Box Plot of total consumption by", input$p1_criterion1))
+      # return(ggplotly(p1_boxplot) %>% layout(dragmode = "pan"))
+      box.title <- paste("Violin and Box Plot of total consumption by", input$p1_criterion1)
+      box.xlab <- list(title = get.desc(input$p1_criterion1))
+      box.ylab <- list(title = "KWH (1 year)")
+      box.margin <- list(t=100, b=100)
+      p1_boxplot <<- plot_ly(x = ~vector_c1, y = ~kwh, type="violin",
+                             box = list(visible=TRUE), meanline = list(visible=TRUE),
+                             hoverinfo = 'none') %>%
+        layout(title = box.title, xaxis = box.xlab, 
+               yaxis = box.ylab,
+               margin = box.margin)
+      return(p1_boxplot)
     } else{
       # when first and second group was selected
       vector_c2 <- make.column.factor(input$p1_criterion2)
@@ -129,17 +126,18 @@ server <- function(input, output, session) {
   # variable desc side panel(total consumption panel)
   output$p1_var_desc <- renderUI({
     rs <- tagList(h3(input$p1_criterion1),
-                  p(' ', unlist(CODEBOOK[CODEBOOK$name == input$p1_criterion1, 2])))
+                  p(' ', get.desc(input$p1_criterion1)))
     
     # if user choose second group
     if (isSecondgroupSet(input)) {
       rs <- tagList(rs,
                     hr(),
                     h3(input$p1_criterion2),
-                    p(' ', unlist(CODEBOOK[CODEBOOK$name == input$p1_criterion2, 2])))
+                    p(' ', get.desc(input$p1_criterion2)))
     }
     return(rs)
   })
+      
   # boxplot panel(total consumption panel)
   output$p1_download_boxplot <- downloadHandler(
     filename = function() {

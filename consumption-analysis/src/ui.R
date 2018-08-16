@@ -138,7 +138,7 @@ ui <- fluidPage(
                                     ),
                             id="p2_tabs"
                             ) # end of p2 tabsetpanel
-                          ,style="overflow-y:scroll") # end of main panel
+                          ) # end of main panel
                       ),
                       value="p2"),
              # code book for variable description

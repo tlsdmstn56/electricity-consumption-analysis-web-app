@@ -36,12 +36,20 @@ make.column.factor <- function(group) {
   #
   # Returns:
   #   vector(factor): factor vector with properly labeld
-  factor.coded <- names(CODEBOOK_JSON[[group]]$coded)
-  factor.label <- unlist(CODEBOOK_JSON[[group]]$coded[factor.coded])
-  factored <- factor(DATA[[group]],
-                     levels = factor.coded,
-                     labels = factor.label)
+  if(is.continuous(group)){
+    factored <- factor(DATA[[group]])
+  } else {
+    factor.coded <- names(CODEBOOK_JSON[[group]]$coded)
+    factor.label <- unlist(CODEBOOK_JSON[[group]]$coded[factor.coded])
+    factored <- factor(DATA[[group]],
+                       levels = factor.coded,
+                       labels = factor.label)
+  }
   return(factored)
+}
+
+get.desc <- function(group) {
+  return(unlist(CODEBOOK[CODEBOOK$name == group, 2]))
 }
 
 is.continuous <- function(group) {
