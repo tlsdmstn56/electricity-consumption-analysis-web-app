@@ -28,7 +28,7 @@ isSecondgroupSet <- function(input) {
   return("None"!=input$p1_criterion2 & input$p1_criterion1!=input$p1_criterion2)
 }
 
-make.column.factor <- function(group) {
+make.column.factor <- function(group, add_label = FALSE) {
   # get factorized vector whose labels and levels are properly set
   #
   # Args:
@@ -46,6 +46,11 @@ make.column.factor <- function(group) {
                        labels = factor.label)
   }
   return(factored)
+}
+
+add.desc.factor <- function(x, desc) {
+  if(is.factor(x)) return(factor(x, levels=c(desc, levels(x))))
+  return(x)
 }
 
 get.desc <- function(group) {

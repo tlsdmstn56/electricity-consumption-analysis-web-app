@@ -46,24 +46,34 @@ ui <- fluidPage(
              tabPanel("Total Consumption",
                       sidebarLayout(
                         sidebarPanel(
+                          h3("Auto-sizing Plot"),
+                          switchInput(inputId = "p1_box_autosize", value=TRUE),
+                          conditionalPanel(condition = "!input.p1_box_autosize",
+                                           sliderInput("p1_box_height", "Height:",
+                                                       min = 0, max = 1000,
+                                                       value = 600),
+                                           sliderInput("p1_box_width", "Width:",
+                                                       min = 0, max = 2000,
+                                                       value = 800)),
+                          hr(),
+                          h3("Variables"),
                           # first group
                           selectInput("p1_criterion1", 
-                                      "First Criterion",
+                                      "X variable",
                                       DROPDOWN_MENU),
                           # second group
                           selectInput("p1_criterion2", 
-                                      "Second Criterion",
+                                      "Color Variable",
                                       c("None",DROPDOWN_MENU)),
                           # group description
-                          htmlOutput("p1_var_desc")),
+                          htmlOutput("p1_var_desc")
+                          
+                          
+                          ),
                         # plots and summary, anova
                         mainPanel(
                           tabsetPanel(
-                            tabPanel("Plot", 
-                                     br(),
-                                     tags$p("Press Download Button for bigger image"),
-                                     downloadButton("p1_download_boxplot", "Download"), 
-                                     br(),
+                            tabPanel("Box Plot",
                                      plotlyOutput("p1_boxplot") %>% withSpinner
                             ),
                             tabPanel("Summary",

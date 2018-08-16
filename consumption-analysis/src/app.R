@@ -12,6 +12,7 @@ library(tidyr)
 library(tibble)
 library(shinyBS)
 library(lemon)
+library(shinyWidgets)
 
 theme_set(theme_grey())
 # Data Import
@@ -85,89 +86,60 @@ server <- function(input, output, session) {
   
   render.p1.boxplot <- function(input) {
     vector_c1 <- make.column.factor(input$p1_criterion1)
-    kwh <- DATA[['KWH']]
+    tmp.dataframe <- data.frame(vector_c1, KWH)
+    box.xlab <- list(title = paste0(get.desc(input$p1_criterion1),"(",
+                                    input$p1_criterion1,")"))
+    box.ylab <- list(title = "KWH (1 year)")
+    box.title <- paste("Box Plot of total consumption by\n", input$p1_criterion1)
+    box.margin <- list(t=100, b=100)
     if (!isSecondgroupSet(input)) {
       # only when first group is selected
-      # p1_boxplot <<- ggplot(mapping = aes(y = kwh, x = vector_c1)) +
-      #   geom_boxplot() + xlab(input$p1_criterion1) + ylab("kwh(1 year)") +
-      #   labs(title = paste("Box Plot of total consumption by", input$p1_criterion1))
-      # return(ggplotly(p1_boxplot) %>% layout(dragmode = "pan"))
-      box.title <- paste("Violin and Box Plot of total consumption by", input$p1_criterion1)
-      box.xlab <- list(title = get.desc(input$p1_criterion1))
-      box.ylab <- list(title = "KWH (1 year)")
-      box.margin <- list(t=100, b=100)
-      p1_boxplot <<- plot_ly(x = ~vector_c1, y = ~kwh, type="violin",
-                             box = list(visible=TRUE), meanline = list(visible=TRUE),
-                             hoverinfo = 'none') %>%
-        layout(title = box.title, xaxis = box.xlab, 
+      p1_boxplot <<- plot_ly(tmp.dataframe, x = ~vector_c1, y = ~KWH, type="box") %>%
+        layout(title = box.title, xaxis = box.xlab,
                yaxis = box.ylab,
                margin = box.margin)
-      return(p1_boxplot)
     } else{
       # when first and second group was selected
       vector_c2 <- make.column.factor(input$p1_criterion2)
-      p1_boxplot <<- ggplot(mapping = aes(y = kwh,
-                                          x = vector_c1,
-                                          fill = vector_c2)) +
-        geom_boxplot() + xlab(input$p1_criterion1) + ylab("kwh(1 year)") +
-        labs(
-          title = paste(
-            "Box Plot of total consumption by",
-            input$p1_criterion1,
-            "and",
-            input$p1_criterion2
-          )
-        ) +
-        labs(fill = input$p1_criterion2)
-      return(ggplotly(p1_boxplot) %>% layout(boxmode = "group", dragmode = "pan"))
+      # legendtitle <- list(yref='paper',xref="paper",
+      #                     y=1.05,x=1.1, text=get.desc(input$p1_criterion2),
+      #                     showarrow=F)
+      tmp.dataframe <- cbind(tmp.dataframe, vector_c2)
+      box.title <- paste(box.title, "and", input$p1_criterion2)
+      p1_boxplot <<- plot_ly(tmp.dataframe, x = ~vector_c1, y = ~KWH, 
+                             color= ~vector_c2, type="box", 
+                             hoverinfo="q1+median+mean+q3") %>%
+        layout(title = box.title, xaxis = box.xlab, 
+               yaxis = box.ylab,
+               margin = box.margin,
+               # annotations = legendtitle,
+               boxmode = "group")
     }
+    if(!input$p1_box_autosize)
+      return(p1_boxplot %>% 
+               layout(height = input$p1_box_height,
+                      width = input$p1_box_width)
+             )
+    return(p1_boxplot)
   }
   
   # variable desc side panel(total consumption panel)
   output$p1_var_desc <- renderUI({
-    rs <- tagList(h3(input$p1_criterion1),
+    criterion1.title <- paste0(input$p1_criterion1,"(x-axis)")
+    rs <- tagList(h4(criterion1.title),
                   p(' ', get.desc(input$p1_criterion1)))
     
     # if user choose second group
     if (isSecondgroupSet(input)) {
+      criterion2.title <- paste0(input$p1_criterion2,"(color)")
       rs <- tagList(rs,
                     hr(),
-                    h3(input$p1_criterion2),
+                    h4(criterion2.title),
                     p(' ', get.desc(input$p1_criterion2)))
     }
     return(rs)
   })
-      
-  # boxplot panel(total consumption panel)
-  output$p1_download_boxplot <- downloadHandler(
-    filename = function() {
-      filename <- paste0(input$p1_criterion1)
-      if (isSecondgroupSet(input)) {
-        filename <- paste0(filename, "_", input$p1_criterion2)
-      }
-      filename <- paste0(filename, "_boxplot.jpeg")
-      return(filename)
-    },
-    content = function(filename) {
-      print(getOption('device'))
-      nr.levels <-
-        nlevels(DATA[[input$p1_criterion1]] %>% as.factor)
-      jpeg_width = nr.levels * 4
-      if (isSecondgroupSet(input)) {
-        jpeg_width = jpeg_width * 1.5
-      }
-      
-      ggsave(
-        filename = filename,
-        plot = p1_boxplot,
-        device = "jpeg",
-        height = 8,
-        width = jpeg_width,
-        units = "cm"
-      )
-    },
-    contentType = "image/jpeg"
-  )
+  
   # rendering plot
   output$p1_boxplot <- renderPlotly({
     curr_user_view <<- "p1_boxplot"
