@@ -9,8 +9,6 @@
 
 ### plotly
 
-
-
 * pros
   - unlikely to have library dependency problems
   - easy download
