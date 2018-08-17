@@ -13,5 +13,6 @@ if [ ! -d $DATA_DIR ]; then
     sudo mkdir $DATA_DIR
 fi
 
+
 sudo cp -rf src/* $SRC_DIR
 sudo cp -rf data/* $DATA_DIR
