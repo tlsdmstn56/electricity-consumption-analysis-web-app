@@ -20,6 +20,10 @@ fi
 
 source config.conf
 
+if [ 4? -ne 0 ]; then
+  echo "error occured, abort"
+fi
+
 echo "building shiny-docker image"
 sudo docker build --pull ./docker/shiny-server/
 echo "pulling rstudio image"
