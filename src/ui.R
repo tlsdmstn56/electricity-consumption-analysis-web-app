@@ -140,7 +140,7 @@ PANEL1_MAIN <- list(mainPanel(tabsetPanel(
 
 PANEL2_SIDE <- list(
   sidebarPanel(
-    conditionalPanel("input.p2_tabs!='summary",
+    conditionalPanel("input.p2_tabs!='summary'",
                      h3("Auto-sizing Plot")),
     conditionalPanel(
       condition = "input.p2_tabs=='box'",
