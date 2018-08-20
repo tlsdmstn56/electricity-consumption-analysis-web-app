@@ -323,7 +323,7 @@ server <- function(input, output, session) {
     bar.margin <- list(t=100, b=150, r=80,l=80)
     plot_ly(tmp.long, x = ~usage, y = ~avg_kwh, color = ~criterion, 
             type="bar", height = p2_barplot_height(), width = p2_barplot_width()) %>%
-      layout(margin = list(r=100), barmode='group', legend = list(y=-0.3,orientation = 'h'),
+      layout(margin = list(r=100), barmode='group', legend = list(y=-0.3,,orientation = 'h'),
              xaxis = bar.xlab, yaxis = bar.ylab, title = bar.title, margin = bar.margin)
   })
   
