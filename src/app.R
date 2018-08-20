@@ -302,6 +302,7 @@ server <- function(input, output, session) {
     id <- paste0("p2_boxplot_",x)
     output[[id]] <- render.p2.boxplot(x)
   })
+  
   # ----------------------------------------
   #
   # [Panel 2] Bar Plot
