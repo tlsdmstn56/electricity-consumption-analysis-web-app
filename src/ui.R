@@ -162,6 +162,20 @@ PANEL2_SIDE <- list(
           min = 400,
           max = 1200,
           value = 500
+        ),
+        sliderInput(
+          "p2_box_bottom",
+          "Bottom Margin (if x label is not visible):",
+          min = 50,
+          max = 200,
+          value = 80
+        ),
+        sliderInput(
+          "p2_box_right",
+          "Right Margin (if x label is not visible):",
+          min = 50,
+          max = 200,
+          value = 100
         )
       )
     ), # end of conditional Panel
@@ -183,6 +197,28 @@ PANEL2_SIDE <- list(
           min = 400,
           max = 1200,
           value = 500
+        ),
+        sliderInput(
+          "p2_bar_right",
+          "Right Margin (if x label is not visible):",
+          min = 50,
+          max = 200,
+          value = 100
+        ),
+        sliderInput(
+          "p2_bar_bottom",
+          "Bottom Margin (if x label is not visible):",
+          min = 0,
+          max = 200,
+          value = 80
+        ),
+        sliderInput(
+          "p2_bar_legend_loc",
+          "Legend Vertical Location:",
+          min = -2,
+          max = 3,
+          value = -0.3,
+          step=0.1
         )
       )
     ),

@@ -123,6 +123,21 @@ server <- function(input, output, session) {
       return(input$p2_box_width-100)
     }
   })
+  p2_boxplot_right_margin <- reactive({
+    if(input$p2_box_autosize){
+      return(100)
+    } else {
+      return(input$p2_box_right)
+    }
+  })
+  p2_boxplot_bottom_margin <- reactive({
+    if(input$p2_box_autosize){
+      return(80)
+    } else {
+      return(input$p2_box_bottom)
+    }
+  })
+  
   
   p2_barplot_height <- reactive({
     if(input$p2_bar_autosize){
@@ -136,6 +151,27 @@ server <- function(input, output, session) {
       return(NULL)
     } else {
       return(input$p2_bar_width)
+    }
+  })
+  p2_barplot_right_margin <- reactive({
+    if(input$p2_bar_autosize){
+      return(100)
+    } else {
+      return(input$p2_bar_right)
+    }
+  })
+  p2_barplot_bottom_margin <- reactive({
+    if(input$p2_bar_autosize){
+      return(50)
+    } else {
+      return(input$p2_bar_bottom)
+    }
+  })
+  p2_barplot_legend_loc <- reactive({
+    if(input$p2_bar_autosize){
+      return(-0.3)
+    } else {
+      return(input$p2_bar_legend_loc)
     }
   })
   
@@ -291,7 +327,8 @@ server <- function(input, output, session) {
       box.ylab <- list(title = paste0("Annual KWH consumed by\n",p2_c_desc()))
       box.xlab  <- list(title = p2_c_desc())
       box.title <- paste("Consumption Usage by\n", p2_c_desc())
-      box.margin <- list(t=100, b=100, r=80,l=80)
+      box.margin <- list(t=100, b=p2_boxplot_bottom_margin(), 
+                         r=p2_boxplot_right_margin(), l=80)
         plot_ly(x = ~p2_c_factor(), y = ~KWH_DF[,usage_idx], type="box",
                 height = p2_boxplot_height(), width = p2_boxplot_width()) %>%
         layout(xaxis = box.xlab, yaxis = box.ylab, title=box.title,
@@ -321,11 +358,14 @@ server <- function(input, output, session) {
     bar.xlab <- list(title = "Consumption Usage")
     bar.ylab <- list(title = "Average KWH (1 year)")
     bar.title <- paste0("\nConsumption Usage by\n",p2_c_desc())
-    bar.margin <- list(t=100, b=150, r=80, l=80)
+    bar.margin <- list(r=p2_barplot_right_margin(), 
+                       b=p2_barplot_bottom_margin(),
+                       t=100)
+    bar.legend <- list(y=p2_barplot_legend_loc(), orientation = 'h')
     plot_ly(tmp.long, x = ~usage, y = ~avg_kwh, color = ~criterion, 
             type="bar", height = p2_barplot_height(), width = p2_barplot_width()) %>%
-      layout(margin = list(r=100), barmode='group', legend = list(y=-0.3,orientation = 'h'),
-             xaxis = bar.xlab, yaxis = bar.ylab, title = bar.title, margin = bar.margin)
+      layout(margin = bar.margin, barmode='group', legend = bar.legend,
+             xaxis = bar.xlab, yaxis = bar.ylab, title = bar.title)
   })
   
   # ----------------------------------------
