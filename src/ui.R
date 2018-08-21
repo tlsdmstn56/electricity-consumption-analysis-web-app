@@ -261,7 +261,6 @@ ui <- fluidPage(
             id = "p2_tabs"
           ),width = 9) # end of p2 tabsetpanel) # end of main panel
       ),
-      
         value = "p2"
         ),
         # code book for variable description
