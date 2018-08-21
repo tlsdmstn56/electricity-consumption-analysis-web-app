@@ -1,0 +1,38 @@
+---
+title: "p1_aov"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Anova Test
+
+testing groups to see if there’s a difference between them.
+
+### Assumption
+
+#### Normality
+
+The population in each group must be close to a normal distribution.
+
+1. Shapiro Test
+```{r echo=FALSE}
+shapiro.test()
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+```{r}
+print(head(KWH))
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
