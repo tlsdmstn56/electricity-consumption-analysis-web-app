@@ -26,3 +26,4 @@ while read PKG;
 do
 sudo bash docker-install-package.sh -n=$NAME -p=$PKG
 done
+

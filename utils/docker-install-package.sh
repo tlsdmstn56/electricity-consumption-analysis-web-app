@@ -28,11 +28,9 @@ if [[ -z $PACKAGE ]] ; then
   echo -n "Package name to install? "
   read PACKAGE
 fi
-echo "Installing $PACKAGE in $NAME..."
-echo
+echo "Checking $PACKAGE is installed in $NAME docker..."
 sudo docker exec $NAME sudo su - -c \
   "R -q -e \"if(!('$PACKAGE' %in% rownames(installed.packages()))){ \
-  print('true??'); \
   install.packages('$PACKAGE', repos='http://cran.rstudio.com/')}\""
   
   
