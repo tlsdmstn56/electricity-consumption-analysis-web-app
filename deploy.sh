@@ -3,6 +3,7 @@ source config.conf
 SRC_DIR=$PRODUCTION_DIR/consumption-elec/
 DATA_DIR=$PRODUCTION_DIR/data/
 
+
 sudo rm -rf $SRC_DIR
 sudo rm -rf $DATA_DIR
 
