@@ -23,5 +23,5 @@ fi
 bash find-packages.sh | \
 while read PKG;
 do
-sudo docker-install-package.sh -n=$NAME -p=$PKG
+sudo bash docker-install-package.sh -n=$NAME -p=$PKG
 done
