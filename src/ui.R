@@ -267,5 +267,5 @@ ui <- fluidPage(
         tabPanel("Codebook", dataTableOutput('p3_codebook'),
                  value = "p3"),
         id = 'main_nav'
-      )
+      ) 
     )
