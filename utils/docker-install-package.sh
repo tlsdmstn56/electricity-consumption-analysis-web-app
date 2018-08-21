@@ -31,5 +31,5 @@ fi
 echo "Installing $PACKAGE in $NAME..."
 echo
 sudo docker exec $NAME sudo su - -c \
-  "R -q -e \"install.packages('$PACKAGE', repos='http://cran.rstudio.com/')\""
+  "R -q -e \"if(!require('$PACKAGE')) install.packages('$PACKAGE', repos='http://cran.rstudio.com/')\""
   

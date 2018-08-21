@@ -20,8 +20,9 @@ if [[ -z $NAME ]] ; then
   echo -n "Docker name? "
   read NAME
 fi
+sudo apt install libdev-ssl
 bash find-packages.sh | \
 while read PKG;
 do
-sudo bash docker-install-package.sh -n=$NAME -p=$PKG
+sudo basdocker-install-package.sh -n=$NAME -p=$PKG
 done

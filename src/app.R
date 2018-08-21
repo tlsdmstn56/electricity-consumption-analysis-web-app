@@ -321,10 +321,10 @@ server <- function(input, output, session) {
     bar.xlab <- list(title = "Consumption Usage")
     bar.ylab <- list(title = "Average KWH (1 year)")
     bar.title <- paste0("\nConsumption Usage by\n",p2_c_desc())
-    bar.margin <- list(t=100, b=150, r=80,l=80)
+    bar.margin <- list(t=100, b=150, r=80, l=80)
     plot_ly(tmp.long, x = ~usage, y = ~avg_kwh, color = ~criterion, 
             type="bar", height = p2_barplot_height(), width = p2_barplot_width()) %>%
-      layout(margin = list(r=100), barmode='group', legend = list(y=-0.3,,orientation = 'h'),
+      layout(margin = list(r=100), barmode='group', legend = list(y=-0.3,orientation = 'h'),
              xaxis = bar.xlab, yaxis = bar.ylab, title = bar.title, margin = bar.margin)
   })
   
