@@ -138,6 +138,7 @@ PANEL1_MAIN <- list(mainPanel(tabsetPanel(
   id = "p1_tabs"
 ),width = 9))
 
+
 PANEL2_SIDE <- list(
   sidebarPanel(
     conditionalPanel("input.p2_tabs!='summary'",
