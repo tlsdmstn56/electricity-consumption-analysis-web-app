@@ -263,6 +263,7 @@ ui <- fluidPage(
       ),
         value = "p2"
         ),
+    
         # code book for variable description
         tabPanel("Codebook", dataTableOutput('p3_codebook'),
                  value = "p3"),
