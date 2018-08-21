@@ -253,7 +253,7 @@ ui <- fluidPage(
                   "p2_download_summary_percentage",
                   "Download(percentage, csv)"
                 )
-              ),
+              ), 
               br(),
               tableOutput("p2_summary_percentage"),
               value = "summary"
