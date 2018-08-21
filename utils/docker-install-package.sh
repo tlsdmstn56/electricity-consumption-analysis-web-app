@@ -32,5 +32,6 @@ echo "Installing $PACKAGE in $NAME..."
 echo
 sudo docker exec $NAME sudo su - -c \
   "R -q -e \"if(!('$PACKAGE' %in% rownames(installed.packages()))){ \
+  print(\"true??\"); \
   install.packages('$PACKAGE', repos='http://cran.rstudio.com/')}\""
   
