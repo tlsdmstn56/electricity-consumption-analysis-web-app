@@ -24,5 +24,5 @@ sudo apt install libdev-ssl
 bash find-packages.sh | \
 while read PKG;
 do
-sudo basdocker-install-package.sh -n=$NAME -p=$PKG
+sudo bash docker-install-package.sh -n=$NAME -p=$PKG
 done
