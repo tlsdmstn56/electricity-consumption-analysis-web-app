@@ -7,8 +7,9 @@ make.summary.df <- function(name){
   #   name: name of group to split the summary table
   #
   # Returns:
-  #   data.frame of summary table by name
-  tapp <- tapply(DATA[['KWH']], as.factor(DATA[[name]]), summary)
+  #   data.frame of summary table by name\
+  factored <- make.column.factor(name, add_label = TRUE)
+  tapp <- tapply(KWH, factored, summary)
   tapp=do.call(rbind,tapp)
   return(tapp)
 }

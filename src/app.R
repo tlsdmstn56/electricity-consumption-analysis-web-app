@@ -13,6 +13,8 @@ library(tibble)
 library(shinyBS)
 library(lemon)
 library(shinyWidgets)
+library(knitr)
+library(rmarkdown)
 
 theme_set(theme_grey())
 # Data Import
@@ -90,7 +92,7 @@ server <- function(input, output, session) {
   p1_c2_desc <- reactive(get.desc(input$p1_criterion2))
   p2_c_desc <- reactive(get.desc(input$p2_criterion))
   p1_c1_levels <- reactive(levels(p1_c1_factor))
-  p1_c0_levels <- reactive(levels(p1_c2_factor))
+  p1_c2_levels <- reactive(levels(p1_c2_factor))
   p2_c_levels <- reactive(levels(p2_c_factor))
   p1_c1_nlevels <- reactive(nlevels(p1_c1_factor))
   p1_c2_nlevels <- reactive(nlevels(p1_c2_factor))
@@ -238,15 +240,24 @@ server <- function(input, output, session) {
   #
   # ----------------------------------------  
   # summary tabnpanel(total consumption panel)
-  output$p1_summary <- renderPrint({
-    cat("By", input$p1_criterion1, end = "\n")
-    print(make.summary.df(input$p1_criterion1))
+  output$p1_summary <- renderUI({
+    output$p1_summary_table1 <<- renderTable(make.summary.df(input$p1_criterion1), 
+                                             rownames = TRUE)
+    rs1 <- list(h3(paste("By", input$p1_criterion1)),
+                p(p1_c1_desc()),
+         tableOutput("p1_summary_table1"))
     if (isSecondgroupSet(input)) {
-      # only when second group is selected
-      cat(" ", end = "\n")
-      cat("By", input$p1_criterion2, end = "\n")
-      print(make.summary.df(input$p1_criterion2))
+      output$p1_summary_table2 <<- renderTable(make.summary.df(input$p1_criterion2), 
+                                               rownames = TRUE)
+      rs2 <- list(
+        br(),
+        h3(paste("By", input$p1_criterion2)),
+        p(p1_c2_desc()),
+        tableOutput("p1_summary_table2")
+      )
+      return(c(rs1, rs2))
     }
+    return(rs1)
   })
   # ----------------------------------------
   #
@@ -254,37 +265,45 @@ server <- function(input, output, session) {
   #
   # ----------------------------------------
   # anova test tab panel(total consumption panel)
-  output$p1_aov <- renderPrint({
+  output$p1_aov <- renderUI({
     if (!isSecondgroupSet(input)) {
       # only when first group is selected
-      cat("oneway ANOVA test of", input$p1_criterion1, end = "\n")
+      header = paste("oneway ANOVA test of", input$p1_criterion1)
       aov.result = aov(KWH ~ p1_c1_factor())
     } else {
       # when first and second group are selected
-      cat("twoway ANOVA test of",
+      header = paste("twoway ANOVA test of",
           input$p1_criterion1,
           "and",
-          input$p1_criterion2,
-          end = "\n")
+          input$p1_criterion2)
       aov.result = aov(KWH ~ p1_c1_factor() + p1_c2_factor())
     }
-    cat(" ", end = "\n")
-    print(aov.result)
-    cat("=======================================================",
-        end = "\n")
+    output$p1_aov_result <<- renderPrint({print(aov.result)})
     summary.aov.result = summary(aov.result)
-    print(summary.aov.result)
+    output$p1_aov_table <<- renderPrint({print(summary.aov.result)})
     # by the value of p-value, it print variable's influence
     p.value = summary.aov.result[[1]][["Pr(>F)"]]
-    if (p.value[1] < 0.05)
-      cat('\n\n',
-          '==>',
-          input$p1_criterion1,
-          ' is influential to total consumption\n')
-    if (isTRUE(p.value[2] < 0.05))
-      cat(' ==>',
-          input$p1_criterion2,
-          ' is influential to total consumption\n')
+    conclusion1 = NULL
+    conclusion2 = NULL
+    if (p.value[1] < 0.05){
+      conclusion1 = tags$p(paste('==>', input$p1_criterion1, 
+                              'is influential to total consumption'))
+    }
+    if (isTRUE(p.value[2] < 0.05)){
+      conclusion2 = tags$p(paste('==>', input$p1_criterion2, 
+                              'is influential to total consumption'))
+    }
+    tagList(
+      h3(header),
+      verbatimTextOutput("p1_aov_result"),
+      br(),
+      verbatimTextOutput("p1_aov_table"),
+      conclusion1,
+      conclusion2,
+      br(),
+      br()
+      # HTML(markdown::markdownToHTML(knit('p1_aov.Rmd', quiet = TRUE)))
+    )
   })
   
   # variable description panel(consumption usage page)

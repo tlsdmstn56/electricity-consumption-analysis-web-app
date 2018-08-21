@@ -132,9 +132,9 @@ PANEL1_MAIN <- list(mainPanel(tabsetPanel(
   tabPanel("Box Plot",
            plotlyOutput("p1_boxplot") %>% withSpinner),
   tabPanel("Summary",
-           verbatimTextOutput("p1_summary")),
+           uiOutput("p1_summary")),
   tabPanel("Anova Test",
-           verbatimTextOutput("p1_aov")),
+           uiOutput("p1_aov")),
   id = "p1_tabs"
 ),width = 9))
 
