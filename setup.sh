@@ -10,6 +10,7 @@ if [ "$ANS" = "n" ]; then
 exit 0
 fi
 
+
 # build docker
 cat config.conf
 echo -n n"please check your config file. Continue? [y/n]"
