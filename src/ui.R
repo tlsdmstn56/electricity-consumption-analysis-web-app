@@ -203,8 +203,6 @@ PANEL2_SIDE <- list(
   )
 )
 
-
-
 ui <- fluidPage(
   HEAD,
   HEADER,
