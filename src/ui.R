@@ -177,7 +177,8 @@ PANEL2_SIDE <- list(
           max = 200,
           value = 100
         )
-      )
+      ),
+      hr()
     ), # end of conditional Panel
     conditionalPanel(
       "input.p2_tabs=='bar'",
@@ -220,9 +221,9 @@ PANEL2_SIDE <- list(
           value = -0.3,
           step=0.1
         )
-      )
+      ),
+      hr()
     ),
-    hr(),
     selectInput("p2_criterion", label = h3("X axis"),
                 sort(COLNAMES_IN_DROPDOWN[1:242])),
     conditionalPanel(
