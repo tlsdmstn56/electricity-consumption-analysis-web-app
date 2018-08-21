@@ -380,7 +380,8 @@ server <- function(input, output, session) {
     bar.margin <- list(r=p2_barplot_right_margin(), 
                        b=p2_barplot_bottom_margin(),
                        t=100)
-    bar.legend <- list(y=p2_barplot_legend_loc(), orientation = 'h')
+    bar.legend <- list(y=p2_barplot_legend_loc(), orientation = 'h', 
+                       x=0.5, xanchor = "center")
     plot_ly(tmp.long, x = ~usage, y = ~avg_kwh, color = ~criterion, 
             type="bar", height = p2_barplot_height(), width = p2_barplot_width()) %>%
       layout(margin = bar.margin, barmode='group', legend = bar.legend,
