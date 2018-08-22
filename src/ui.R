@@ -99,7 +99,7 @@ tagList(
       "RECS2015(Residential Electricity Consumption Survey 2015)"
     )
   ),
-  p("eunsoo.sheen@encoredtech.com for any feedback")
+  p("eunsoo.sheen@gmail.com for any feedback")
 ))
 
 PANEL1_SIDE <- list(
