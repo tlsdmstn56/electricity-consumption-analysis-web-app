@@ -11,7 +11,6 @@ library(gridExtra)
 library(tidyr)
 library(tibble)
 library(shinyBS)
-library(lemon)
 library(shinyWidgets)
 library(knitr)
 library(rmarkdown)
@@ -176,7 +175,6 @@ server <- function(input, output, session) {
       return(input$p2_bar_legend_loc)
     }
   })
-  
   # ----------------------------------------
   #
   # [Panel 1] Boxplot

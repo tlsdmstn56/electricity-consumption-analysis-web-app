@@ -47,6 +47,18 @@ div.flex.element <-
     return(div(..., style = style))
   }
 
+ui.add.help.icon <- function(name, id) {
+  return(
+      list(
+      h3(name,style="display: inline;"),
+      span(icon("info-circle"), id = id, style="display: inline;"),
+      bsTooltip(id=id, title=TOOLTIP_CONTENT, 
+                placement = "right", trigger = "hover",
+                option=list(container='body'))
+      )
+  )
+}
+
 HEAD <- tags$head(
   tags$script(
     '
@@ -65,6 +77,18 @@ HEAD <- tags$head(
   )
 )
 
+TOOLTIP_CONTENT <- paste("<div style=\"text-align: left;\">[Frequnetly Used Variable]",
+                         "* MONEYPY: income",
+                         "* CLIMATE_REGION_PUB: climate(cold, very cold, hot dry,...)",
+                         "* TYPEHUQ: Type of housing unit(mobile, single-family, apartment..)",
+                         "* UATYP10: Census 2010 Urban Type(Urban, Rural)",
+                         "* DIVISION: Census Division(New Englance, Pacific..)",
+                         "* HHSEX: Respondent gender",
+                         "* HHAGE: Respondent age",
+                         "* EMPLOYHH: Respondent employment status(fulltime, part time..)",
+                         "</div>",
+                         sep = "<br>")
+
 HEADER <- list(titlePanel("Consumption Analysis", windowTitle = "Consumption Analysis"),
 # guide(frequent used variables, data source, some infos)
 tagList(
@@ -74,18 +98,6 @@ tagList(
       href = "https://www.eia.gov/consumption/residential/data/2015/",
       "RECS2015(Residential Electricity Consumption Survey 2015)"
     )
-  ),
-  tags$ul(
-    tags$li("MONEYPY: income"),
-    tags$li("CLIMATE_REGION_PUB: climate(cold, very cold, hot dry,...)"),
-    tags$li(
-      "TYPEHUQ: Type of housing unit(mobile, single-family, apartment..)"
-    ),
-    tags$li("UATYP10: Census 2010 Urban Type(Urban, Rural)"),
-    tags$li("DIVISION: Census Division(New Englance, Pacific..)"),
-    tags$li("HHSEX: Respondent gender"),
-    tags$li("HHAGE: Respondent age"),
-    tags$li("EMPLOYHH: Respondent employment status(fulltime, part time..)")
   ),
   p("eunsoo.sheen@encoredtech.com for any feedback")
 ))
@@ -113,15 +125,20 @@ PANEL1_SIDE <- list(
       )
     ),
     hr(),
-    h3("Variables"),
     # first group
-    selectInput("p1_criterion1",
-                "X variable",
-                DROPDOWN_MENU),
+    ui.add.help.icon("X variable","p1_c1_help"),
+    pickerInput(inputId = "p1_criterion1", 
+                choices = DROPDOWN_MENU, 
+                options = list(`live-search` = TRUE,
+                               `actions-box` = TRUE,
+                               size = 10)),
     # second group
-    selectInput("p1_criterion2",
-                "Color Variable",
-                c("None", DROPDOWN_MENU)),
+    ui.add.help.icon("Color Variable","p1_c2_help"),
+    pickerInput(inputId = "p1_criterion2",
+                choices = c('None', DROPDOWN_MENU), 
+                options = list(`live-search` = TRUE,
+                               `actions-box` = TRUE,
+                               size = 10)),
     # group description
     htmlOutput("p1_var_desc"),
     width = 3
@@ -224,28 +241,46 @@ PANEL2_SIDE <- list(
       ),
       hr()
     ),
-    selectInput("p2_criterion", label = h3("X axis"),
-                sort(COLNAMES_IN_DROPDOWN[1:242])),
+    ui.add.help.icon("X axis","p2_c_help"),
+    pickerInput(inputId = "p2_criterion", 
+                choices = sort(COLNAMES_IN_DROPDOWN[1:242]), 
+                options = list(`live-search` = TRUE,
+                               `actions-box` = TRUE,
+                               size = 10)),
     conditionalPanel(
       condition = "input.p2_tabs=='box'",
-      checkboxGroupInput(
-        "p2_box_y",
-        label = h3("Y axis"),
-        choices = CHOICE_LIST,
-        selected = 1
-      )
+      pickerInput(inputId = "p2_box_y", 
+                  label = h3("Y axis"), 
+                  choices = CHOICE_LIST, 
+                  options = list(`live-search` = TRUE,
+                                 `actions-box` = TRUE,
+                                 `deselect-all-text` = "deselect all",
+                                 `select-all-text` = "select all",
+                                 `selected-text-format` = "count > 1",
+                                 size = 10),
+                  multiple = TRUE,
+                  selected = CHOICE_LIST[1]
+                  )
+      # checkboxGroupInput(
+      #   "p2_box_y",
+      #   label = h3("Y axis"),
+      #   choices = CHOICE_LIST,
+      #   selected = 1
+      # )
     ),
     htmlOutput("p2_var_desc"),
     width = 3
   )
 )
 
+# TODO button
+
 ui <- fluidPage(
   HEAD,
   HEADER,
   # Navigation Bar on the top
   navbarPage(
-    title = "Menu",
+    title = "",
     # Total Consumption Tab
     tabPanel(
       "Total Consumption",
